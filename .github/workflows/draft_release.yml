@@ -1,21 +1,13 @@
-name: Release
-on:
-  push:
-    tags:
-      - 'ProBaseBuilde'
+name: Main
+
+on: push
+
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: Create Archive Release
-        uses: thedoctor0/zip-release@master
-        with:
-          filename: 'release.zip'
-          exclusions: '*.git*'
-      - name: Upload Release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: 'release.zip'
-          token: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
