@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     tags:
-      - '*'
+      - 'ProBaseBuilde'
 jobs:
   release:
     runs-on: ubuntu-latest
