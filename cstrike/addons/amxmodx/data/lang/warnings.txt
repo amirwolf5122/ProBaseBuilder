@@ -1,0 +1,45 @@
+[ru]
+WARNINGS_MENU_TITLE = Меню предупреждений
+WARNINGS_MENU_SUBTITLE_PLAYERS = выберите игрока
+WARNINGS_MENU_PUNISH = наказать
+WARNINGS_MENU_NEXT = Далее
+WARNINGS_MENU_BACK = Назад
+WARNINGS_MENU_EXIT = Выход
+WARNINGS_CHAT_WRITE_REASON = Введите причину для %L этого игрока
+WARNINGS_CHAT_WRITE_REASON_PUNISHMENT = наказания
+WARNINGS_CHAT_WRITE_REASON_WARNING = предупреждения
+WARNINGS_MENU_SUBTITLE_REASONS = выберите причину
+WARNINGS_MENU_SUBTITLE_PLAYER = Игрок
+WARNINGS_MENU_TIME = мин.
+WARNINGS_CHAT_CANT_BE_WARNED = Извините, данный игрок не может быть предупреждён сейчас
+WARNINGS_DHUD_PART_1 = Вас предупредил\nадмин %s\nза %s (%d раз)
+WARNINGS_DHUD_PART_2 = При повторных нарушениях\nВы будете наказаны!\nСоблюдайте правила!
+WARNINGS_CHAT_WARNING = предупредил %s за %s (%d раз)
+WARNINGS_MENU_SUBTITLE_ACTION = подтвердите действие
+WARNINGS_MENU_SUBTITLE_REASON = Причина
+WARNINGS_MENU_SUBTITLE_TIME = время
+WARNINGS_MENU_ITEM_PUNISH = Наказать игрока
+WARNINGS_MENU_ITEM_BACK = Вернуться назад
+
+[en]
+WARNINGS_MENU_TITLE = Warnings menu
+WARNINGS_MENU_SUBTITLE_PLAYERS = select player
+WARNINGS_MENU_PUNISH = punish
+WARNINGS_MENU_NEXT = Next
+WARNINGS_MENU_BACK = Back
+WARNINGS_MENU_EXIT = Exit
+WARNINGS_CHAT_WRITE_REASON = Enter a reason for %L this player
+WARNINGS_CHAT_WRITE_REASON_PUNISHMENT = punishment
+WARNINGS_CHAT_WRITE_REASON_WARNING = warning
+WARNINGS_MENU_SUBTITLE_REASONS = select reason
+WARNINGS_MENU_SUBTITLE_PLAYER = Player
+WARNINGS_MENU_TIME = min
+WARNINGS_CHAT_CANT_BE_WARNED = Sorry, this player can't be warned now
+WARNINGS_DHUD_PART_1 = You have been warned\nadmin %s\nfor %s (%d times)
+WARNINGS_DHUD_PART_2 = Repeated violations\nyou will be punished!\nFollow the rules!
+WARNINGS_CHAT_WARNING = warned %s for %s (%d times)
+WARNINGS_MENU_SUBTITLE_ACTION = confirmation
+WARNINGS_MENU_SUBTITLE_REASON = Reason
+WARNINGS_MENU_SUBTITLE_TIME = time
+WARNINGS_MENU_ITEM_PUNISH = Punish player
+WARNINGS_MENU_ITEM_BACK = Return back

@@ -1,0 +1,27 @@
+"AMX Last Info"
+fr:"Derniere Info AMX"
+
+"- displays the last few disconnected players info"
+fr:"- affiche les informations des derniers joueurs deconnectes"
+
+"No player recently disconnected."
+fr:"Aucun joueur recemment deconnecte."
+
+"^nLast few disconnected players:^n%-26.25s %-20.19s %-18s %-13s %s"
+fr:"^nJoueurs recents deconnectes :^n%-26.25s %-20.19s %-18s %-13s %s"
+
+"Name"
+fr:"Nom"
+
+"AuthID"
+fr:"AuthID"
+
+"IP"
+fr:"IP"
+
+"Country"
+fr:"Pays"
+
+"Flags"
+fr:"Acces"
+

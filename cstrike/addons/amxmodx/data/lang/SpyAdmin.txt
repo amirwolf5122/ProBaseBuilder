@@ -1,0 +1,4 @@
+[en]
+SPYADMIN_NOACCESS = &x07You have no access to this command.
+SPYADMIN_ACTIVATED = Spy Mode &x06activated.
+SPYADMIN_DEACTIVATED = Spy Mode &x07deactivated.

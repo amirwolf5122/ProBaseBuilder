@@ -1,0 +1,87 @@
+[en] -- OciXCrom
+CM_MENU_TITLE = \y[\rChat Manager\y] \wUser Settings
+CM_MENU_PREFIX = Prefix
+CM_MENU_CHAT_COLOR = Chat Color
+CM_MENU_CUSTOM_NAME = Custom Name
+CM_MENU_ENABLED = \y[ON]
+CM_MENU_DISABLED = \r[OFF]
+
+[mk] -- OciXCrom
+CM_MENU_TITLE = \y[\rChat Manager\y] \wPrilagoduvanja
+CM_MENU_PREFIX = Prefiks
+CM_MENU_CHAT_COLOR = Boja na chatot
+CM_MENU_CUSTOM_NAME = Specijalno ime
+CM_MENU_ENABLED = \y[VKLUCHENO]
+CM_MENU_DISABLED = \r[ISKLUCHENO]
+
+[bg] -- OciXCrom
+CM_MENU_TITLE = \y[\rChat Manager\y] \wNastroiki
+CM_MENU_PREFIX = Prefiks
+CM_MENU_CHAT_COLOR = Cvqt na chata
+CM_MENU_CUSTOM_NAME = Specialno ime
+CM_MENU_ENABLED = \y[VKLUUCHENO]
+CM_MENU_DISABLED = \r[IZKLIUCHENO]
+
+[bp] -- tarsisd2
+CM_MENU_TITLE = \y[\rGerenciador de Chat\y] \wConfiguracao do Usuario
+CM_MENU_PREFIX = Prefixo
+CM_MENU_CHAT_COLOR = Cor do Chat
+CM_MENU_CUSTOM_NAME = Nome Customizado
+CM_MENU_ENABLED = \y[ON]
+CM_MENU_DISABLED = \r[OFF]
+
+[ru] -- Gudaus
+CM_MENU_TITLE = \y[\rМенеджер чата\y] \wНастройки пользователя
+CM_MENU_PREFIX = Префикс
+CM_MENU_CHAT_COLOR = Цвет чата
+CM_MENU_CUSTOM_NAME = Кастомное имя
+CM_MENU_ENABLED = \y[Включить]
+CM_MENU_DISABLED = \r[Выключить]
+
+[ro] -- @MarLeo94
+CM_MENU_TITLE = \y[\rManager de chat\y] \wSetÄƒrile utilizatorului
+CM_MENU_PREFIX = Prefix
+CM_MENU_CHAT_COLOR = Culoarea chatului
+CM_MENU_CUSTOM_NAME = Nume personalizat
+CM_MENU_ENABLED = \y[Activat]
+CM_MENU_DISABLED = \r[Dezactivat]
+
+[es] -- @MarLeo94
+CM_MENU_TITLE = \y[\rGestor de chat\y] \wAjustes de usuario
+CM_MENU_PREFIX = Prefijo
+CM_MENU_CHAT_COLOR = Color de chat
+CM_MENU_CUSTOM_NAME = Nombre personalizado
+CM_MENU_ENABLED = \y[Activado]
+CM_MENU_DISABLED = \r[Desactivado] 
+
+[de] -- Mordekay
+CM_MENU_TITLE = \y[\rChat Manager\y] \wNutzer Einstellungen
+CM_MENU_PREFIX = Namenspräfix
+CM_MENU_CHAT_COLOR = Chat Farbe
+CM_MENU_CUSTOM_NAME = Benutzerdefinierter Name
+CM_MENU_ENABLED = \y[Ein]
+CM_MENU_DISABLED = \r[Aus]
+
+[tr] -- Snake.
+CM_MENU_TITLE = \y[\rChat Yoneticisi\y] \wKullanici Ayarlari
+CM_MENU_PREFIX = Onek
+CM_MENU_CHAT_COLOR = Chat Rengi
+CM_MENU_CUSTOM_NAME = Ozel Isim
+CM_MENU_ENABLED = \y[ACIK]
+CM_MENU_DISABLED = \r[KAPALI]
+
+[hu] -- regener
+CM_MENU_TITLE = \y[\rChat Manager\y] \wSaját Beállítások
+CM_MENU_PREFIX = Előtag
+CM_MENU_CHAT_COLOR = Chat Színe
+CM_MENU_CUSTOM_NAME = Egyedi Név
+CM_MENU_ENABLED = \y[BE]
+CM_MENU_DISABLED = \r[KI]
+
+[pl] -- Pawel
+CM_MENU_TITLE = \y[\rChat Manager\y]\w Ustawienia
+CM_MENU_PREFIX = Prefix
+CM_MENU_CHAT_COLOR = Kolor czatu
+CM_MENU_CUSTOM_NAME = Wlasna nazwa
+CM_MENU_ENABLED = \y[ON]
+CM_MENU_DISABLED = \r[OFF]

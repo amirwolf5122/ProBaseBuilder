@@ -1,0 +1,32 @@
+[en]
+
+FAIL_DISABLED = The BaseBuilder Shop is disabled!
+FAIL_DEAD = You must be alive to use this!
+
+SHOP_HUMAN_OFF = The &x06Builder's&x01 Shop Menu are actually disabled!
+SHOP_ZOMBIE_OFF = The &x07Zombie's&x01 Shop Menu are actually disabled!
+
+SHOP_HP_A = You have bought&x04 %i HP&x01!
+SHOP_HP_B = You have bought&x04 %i HP&x01!
+SHOP_ARMOR = You have bought&x04 %i Armor&x01!
+SHOP_HE = You have bought &x04HE Grenade&x01!
+SHOP_FLASH = You have bought &x04Flash Grenade&x01!
+SHOP_SMOKE = You have bought &x04SMOKE Grenade&x01!
+SHOP_SUPERKNIFE = You have bought &x04Super Knife&x01!
+SHOP_BHOP = You have bought &x04BunnyHop&x01!
+SHOP_MULTIJUMP = You have bought &x04MultiJump&x01!
+SHOP_ULTIMATE_CLIP = You have bought&x04 UltimateClip&x01!
+SHOP_GRAVITY = You have bought &x04Gravity&x01!
+SHOP_SPEED = You have bought &x04SPEED&x01!
+SHOP_INVISIBLE = You have bought &x04Invisible&x01!
+SHOP_INVISIBLE_END = Watch out You're &x05Visible
+SHOP_GODMOD = You have bought &x04Godmod&x01!
+SHOP_GODMOD_END = Watch out &x05Godmod&x01 has been Ended!
+SHOP_M249 = You have bought &x04M249 Para Machinegun&x01!
+SHOP_G3SG1 = You have bought &x04G3SG1 Auto-Sniper&x01!
+SHOP_SG550 = You have bought &x04SG550 Auto-Sniper&x01!
+
+SHOP_MESSAGE = Type &x04/shop&x01 to buy some great items!
+FAIL_ITEM_MONEY = You don't have enough money to buy this item!
+FAIL_ITEM_HAS = You already have bought this item!
+

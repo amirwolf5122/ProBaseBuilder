@@ -1,0 +1,34 @@
+[en]
+CONNECT_IP_JOINED = Joined
+CONNECT_IP_DISCONNECTED = Disconnected
+CONNECT_IP_CONNECTING = is connecting
+
+[ru]
+CONNECT_IP_JOINED = готов к игре
+CONNECT_IP_DISCONNECTED = покинул сервер
+CONNECT_IP_CONNECTING = заходит на сервер
+
+[pl]
+CONNECT_IP_JOINED = Dolaczyl
+CONNECT_IP_DISCONNECTED = Odszedl
+CONNECT_IP_CONNECTING = laczy sie
+
+[de]
+CONNECT_IP_JOINED = Kommst in Server
+CONNECT_IP_DISCONNECTED = Kommst aus Server
+CONNECT_IP_CONNECTING = Kommst bald in Server
+
+[ro]
+CONNECT_IP_JOINED = a intrat
+CONNECT_IP_DISCONNECTED = a iesit
+CONNECT_IP_CONNECTING = se conecteaza
+
+[da]
+CONNECT_IP_JOINED = Kommer ind i serveren
+CONNECT_IP_DISCONNECTED = Gik ud af serveren
+CONNECT_IP_CONNECTING = Er på vej ind i serveren
+
+[nl]
+CONNECT_IP_JOINED = Heeft Toegetreden
+CONNECT_IP_DISCONNECTED = Disconnecteerde
+CONNECT_IP_CONNECTING = is aan het connecteren
