@@ -1,6 +1,6 @@
 # ProBaseBuilder
 
-<p align="center">BaseBuilder Mod for Counter-Strike 1.6 ( AMXX 1.8.3 / 1.9 / 1.10 ).</p>
+<p align="center">BaseBuilder Mod for Counter-Strike 1.6 ( AMXX 1.8.2 / 1.9 / 1.10 ).</p>
 
 <p align="center">
     <a href="https://github.com/amirwolf5122/ProBaseBuilder/releases">
