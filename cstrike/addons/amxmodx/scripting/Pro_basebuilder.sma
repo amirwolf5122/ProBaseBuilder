@@ -514,6 +514,7 @@ public plugin_precache()
 	precache_model(sprite_admin);
 	precache_model(sprite_vip);
 	precache_model(sprite_player);
+	precache_model("models/rpgrocket.mdl")
 	
 	return;
 }
