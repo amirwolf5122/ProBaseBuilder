@@ -280,7 +280,7 @@ new const Float:g_fRenderAmt[MAX_COLORS] =
 	175.0, //Gray
 	125.0, //Black
 	125.0, //White
-	125.0  //Random
+	150.0  //Random
 }
 
 enum _:ColorsBB
