@@ -17,7 +17,8 @@
   <a href="#installation">Installation</a> •
   <a href="#updating">Updating</a> •
   <a href="#downloads">Downloads</a> •
-  <a href="#features">Features</a>
+  <a href="#features">Features</a> •
+  <a href="#youtube">YouTube</a>
 </p>
 
 ---
@@ -44,3 +45,6 @@
       
 ## Features
 - TODO
+
+## YouTube
+- [Channel](https://www.youtube.com/@ProBaseBuilder)
