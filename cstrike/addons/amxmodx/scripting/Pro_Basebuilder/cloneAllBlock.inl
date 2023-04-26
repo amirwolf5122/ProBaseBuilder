@@ -260,7 +260,7 @@ public cloneBlockFolder(){
 		format(firstFolder, sizeof(firstFolder) - 1, "%s/%s", szDir, cloneBlock[i][1]);
 	
 		if(!dir_exists(firstFolder)){
-			log_amx("=== Stworzono glowny folder %s: %s ===", cloneBlock[i][0], cloneBlock[i][1]);
+			log_amx("=== The main folder has been created %s: %s ===", cloneBlock[i][0], cloneBlock[i][1]);
 			mkdir(firstFolder);
 		}
 	}
