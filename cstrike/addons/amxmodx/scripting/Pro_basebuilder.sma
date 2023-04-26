@@ -4,7 +4,6 @@ AmirWolf
 Contact: T.me/Mr_Admins
 
 Version 7.2 Pub
-
 */
 
 #include <amxmodx>
