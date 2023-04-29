@@ -4,11 +4,8 @@ AmirWolf
 
 Version 7.0
 */
-//new iTarget, iBody;
-//#define max_Players 27
 
 #define isPlayer(%1) ((1 <= %1 && %1 < MAXPLAYERS))
-#define MAXHUDDEAL 5
 #define BAN_BUILD	"basebuilder/IR_zombie/ban.wav"
 #define UNBAN_BUILD	"basebuilder/IR_zombie/unban.wav"
 #define TEAM_SWP	"sound/basebuilder/IR_zombie/swap.mp3"
@@ -16,11 +13,11 @@ Version 7.0
 
 new const limitBlocks = 25;
 new const LASERSPRITE[]	= "sprites/basebuildervt/laserbeam.spr";
-new const sprite_player[ ] = "sprites/basebuilder/barhp.spr";
-new const sprite_vip[ ] = "sprites/basebuilder/barhpivp.spr";
-new const sprite_admin[ ] = "sprites/basebuilder/newHp.spr";
-new const TEAMSPRITE[]		=	"sprites/basebuildervt/teams3.spr";	
-new const BLUEZSPRITE[]		=	"sprites/basebuildervt/bluez.spr";
+new const sprite_player[] = "sprites/basebuilder/barhp.spr";
+new const sprite_vip[] = "sprites/basebuilder/barhpivp.spr";
+new const sprite_admin[] = "sprites/basebuilder/newHp.spr";
+new const TEAMSPRITE[] = "sprites/basebuildervt/teams3.spr";	
+new const BLUEZSPRITE[] = "sprites/basebuildervt/bluez.spr";
 
 new Float:reconnectTableTime[33];
 new Float:fOffset[33][3];
@@ -28,10 +25,9 @@ new Float:userAfkValue[33];
 new Float:userPlayerSpeed[33] = 260.0;
 new Float:userTeamLine[33];
 
-//new bool:extraClone;
+new bool:serverLetClone;
 new bool:clockStop;
 new bool:userReconnected[33];
-new bool:serverLetClone
 new bool:userLockBlock[33];
 new bool:AutoLockBlock[33];
 new bool:userViewCamera[33];
