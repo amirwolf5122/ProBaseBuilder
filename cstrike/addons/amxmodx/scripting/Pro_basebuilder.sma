@@ -482,6 +482,14 @@ public plugin_precache()
 	if (g_iInfectTime)
 		precache_sound(INFECTION)
 	
+	i = create_entity("info_bomb_target");
+	entity_set_origin(i, Float:{8192.0,8192.0,8192.0})
+	
+	i = create_entity("info_map_parameters");
+	DispatchKeyValue(i, "buying", "3");
+	DispatchKeyValue(i, "bombradius", "1");
+	DispatchSpawn(i);
+	
 	g_zclass_name = ArrayCreate(32, 1)
 	g_zclass_info = ArrayCreate(32, 1)
 	g_zclass_modelsstart = ArrayCreate(1, 1)
