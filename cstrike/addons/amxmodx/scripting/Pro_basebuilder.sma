@@ -1302,6 +1302,7 @@ public logevent_round_start()
 	
 	client_cmd(0,"mp3 stop");
 	set_lights("#OFF");
+	isMusicPlaying = false
 	
 	remove_task(TASK_BUILD)
 	remove_task(TASK_PREPTIME)
@@ -1547,8 +1548,9 @@ public client_death(g_attacker, g_victim, wpnindex, hitplace, TK)
 		cs_set_user_team(g_victim, CS_TEAM_T)
 		g_isZombie[g_victim] = true
 		set_task(float(g_iInfectTime), "Respawn_Player", g_victim+TASK_RESPAWN)
-		if(gethumans() == 1){
+		if(gethumans() == 1 && !isMusicPlaying){
 			client_cmd(0, "mp3 play ^"%s^"", LASTHUMAN)
+			isMusicPlaying = true;
 			set_lights("c")
 			give_item(g_attacker, "weapon_hegrenade")
 			give_item(g_attacker, "weapon_smokegrenade")
