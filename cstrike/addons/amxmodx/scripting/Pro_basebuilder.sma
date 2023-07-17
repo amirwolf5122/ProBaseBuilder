@@ -1336,9 +1336,7 @@ public Play_Music()
         if(userMusic[id])
 		{
 			client_cmd(id,"stopsound")
-			if(g_boolCanBuild) client_cmd(id, "mp3 play %s", PHASE_BUILD)
-			if(g_boolPrepTime) client_cmd(id, "mp3 play %s", PHASE_PREP)
-			if(!g_boolCanBuild && !g_boolPrepTime) client_cmd(id, "mp3 play %s", PHASE_RUN)
+			client_cmd(id, "mp3 play %s", g_boolCanBuild ? PHASE_BUILD : (g_boolPrepTime ? PHASE_PREP : PHASE_RUN))
 		}
     }
 }
