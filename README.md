@@ -31,6 +31,9 @@
 - Rotating blocks
 - Anti-Reconnect
 - Anti-AFK
+- Jetpack (Allows you to fly while building)
+- Admin Menu (God, Noclip, Build, God + Build for 20 sec, Stopping building time And a few more things
+- Player transfer system (Admin can grab a player and move him)
   
 ## Requirements
 - HLDS installed;
