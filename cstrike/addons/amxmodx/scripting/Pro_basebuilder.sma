@@ -740,10 +740,12 @@ public plugin_init()
 	new const blockCommandAll[][] = { "buy", "go", "buyammo1", "buyammo2", "radio", "radio1", "votekick", "votemap", "vote" , "kick"};
 	for(new i = 0; i < sizeof(blockCommandAll); i++) register_clcmd(blockCommandAll[i],  "blockCommand")
 	
-	register_clcmd("say /clone", 		"cloneOffset",	0);
-	register_clcmd("lastinv", 		"rotateBlock");
+	register_clcmd("say /clone",		"cloneOffset",	0);
+	register_clcmd("lastinv",		"rotateBlock");
 	//register_clcmd("x", "adminLockBlockCmd")
 	clonePrepare();
+	register_clcmd( "+jetpack",		"userJetPackOn" );
+	register_clcmd( "-jetpack",		"userJetPackOff" );
 	
 	register_clcmd("bb_lock",	"cmdLockBlock",0, " - Aim at a block to lock it");
 	register_clcmd("bb_claim",	"cmdLockBlock",0, " - Aim at a block to lock it");
@@ -920,6 +922,7 @@ public client_connect(id){
 	userMoveAs[id] = 0;
 	userMoverBlockColor[id] = 0;
 	userAllowBuild[id] = 0;
+	userJetpackSpeed[id] = 400;
 	userReconnected[id] = false;
 }
 
@@ -1033,6 +1036,19 @@ public addToReconnect(id, type){
 		
 	}
 	return 1;
+}
+
+public userJetPackOn(id){
+	if(g_boolCanBuild || (access(id, FLAGS_FULLADMIN))){
+		userJetPack[id] = true;
+		entity_set_int(id,EV_INT_sequence, 8);
+	}
+	return PLUGIN_HANDLED;
+}
+
+public userJetPackOff(id){
+	userJetPack[id] = false;
+	return PLUGIN_HANDLED;
 }
 
 public ev_RoundStart()
@@ -1299,6 +1315,7 @@ public logevent_round_start()
 	
 	print_color(0, "^x04 ---[ Base Builder %s ]---", VERSION);
 	print_color(0, "^x03 %L", LANG_SERVER, "ROUND_MESSAGE");
+	print_color(0, "^x03 To use Jetpack ---> Bind +jetpack");
 	
 	client_cmd(0,"mp3 stop");
 	set_lights("#OFF");
@@ -2462,6 +2479,16 @@ public fw_CmdStart( id, uc_handle, randseed )
 			moveBarHp(id);
 		else removeBarHp(id);
 	}
+	
+	if( userJetPack[ id ] ){
+		if(g_boolCanBuild || (access(id, FLAGS_FULLADMIN))){	
+			static Float:fVelo[ 3 ];
+			VelocityByAim(id, userJetpackSpeed[id], fVelo );
+			entity_set_vector(id , EV_VEC_velocity, fVelo );
+			entity_set_int(id,EV_INT_sequence, 8 );	
+		}
+	}
+	
 	teamLineOrSprite(id);
 	return FMRES_IGNORED;
 }
