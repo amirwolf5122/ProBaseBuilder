@@ -121,18 +121,21 @@ public PlayerMenu(id){
 	}
 	
 	iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n^n\d|\r5\d| \r[ \wRandom Colors\r ]");
-	iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n^n\d|\r6\d| \r[ \wPlay Music\r ]\w: %s", userMusic[id] ? "\yON" : "\dOFF");
-	iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n\d|\r7\d| \r[ \wThird person view\r ]\w: %s", userViewCamera[id] ? "\yON" : "\dOFF");
 	
 	if(access(id, FLAGS_VIP) && g_boolCanBuild && cs_get_user_team(id) == CS_TEAM_CT)
 	{
-		iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n\d|\r8\d| \r[ \wPlayer Speed\r ]\w: \y%d", floatround(Float:userPlayerSpeed[id]));
+		iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n^n\d|\r6\d| \r[ \wPlayer Speed\r ]\w: \y%d", floatround(Float:userPlayerSpeed[id]));
 	}
 	else
 	{
-		iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n\d|\r8\d| \r[ \dPlayer Speed\r ]\w: \dOFF %s", (get_user_flags(id) & FLAGS_VIP) ? "" : "\r[ \yVIP\r ]")
+		iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n\d|\r6\d| \r[ \dPlayer Speed\r ]\w: \dOFF %s", (get_user_flags(id) & FLAGS_VIP) ? "" : "\r[ \yVIP\r ]")
 	}
+	iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n\d|\r7\d| \r[ \wJetPack Speed\r ]\w: \y%d", userJetpackSpeed[id]);
 	
+	iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n^n\d|\r8\d| \r[ \wPlay Music\r ]\w: %s", userMusic[id] ? "\yON" : "\dOFF");
+	iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n\d|\r9\d| \r[ \wThird person view\r ]\w: %s", userViewCamera[id] ? "\yON" : "\dOFF");
+	
+
 	iLen += formatex(gText[iLen], charsmax(gText) - iLen, "^n^n\d|\r0\d| \wExit");
 	
 	show_menu(id, KEYS_GENERIC, gText, -1, "PlayerMenu")
@@ -162,23 +165,28 @@ public PlayerMenu_2(id, item){
 			client_cmd(id, "say /random");
 		}
 		case 5:{
-			userMusic[id] =! userMusic[id];
-			if(!userMusic[id]){
-				client_cmd(id,"mp3 stop")
-			}
-		}
-		case 6:{
-			userViewCamera[id] =! userViewCamera[id];
-			if(userViewCamera[id])
-				set_view(id,CAMERA_3RDPERSON);
-			else set_view(id, CAMERA_NONE);
-		}
-		case 7:{
 			if(is_user_alive(id) && access(id, FLAGS_VIP) && g_boolCanBuild && cs_get_user_team(id) == CS_TEAM_CT){
 			if ((userPlayerSpeed[id] += 100.0) > 560.0) 
 				userPlayerSpeed[id] = 260.0;
 			set_user_maxspeed(id, Float:userPlayerSpeed[id])
 			}else print_color(id, "%s ^x03You do not have access.", MODNAME)
+		}
+		case 6: 
+		{
+			if ((userJetpackSpeed[id] += 100) > 1000) 
+				userJetpackSpeed[id] = 100;
+		}
+		case 7:{
+			userMusic[id] =! userMusic[id];
+			if(!userMusic[id]){
+				client_cmd(id,"mp3 stop")
+			}
+		}
+		case 8:{
+			userViewCamera[id] =! userViewCamera[id];
+			if(userViewCamera[id])
+				set_view(id,CAMERA_3RDPERSON);
+			else set_view(id, CAMERA_NONE);
 		}
 		case 9: // exit
 		{

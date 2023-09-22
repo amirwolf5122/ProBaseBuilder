@@ -47,11 +47,11 @@ new lightCharacter[] = "abcdefghijklmnopqrstuvwxyz";
 
 new Float:reconnectTableTime[33], Float:fOffset[33][3], Float:userAfkValue[33], Float:userPlayerSpeed[33] = 260.0, Float:userTeamLine[33],
 	bool:serverLetClone, bool:clockStop, bool:userReconnected[33], bool:userLockBlock[33], bool:AutoLockBlock[33], bool:userViewCamera[33],
-	bool:userMusic[33], bool:ReviveUsedViP[33], bool:Color_Random_Block[33], bool:isMusicPlaying = false,
+	bool:userMusic[33], bool:ReviveUsedViP[33], bool:Color_Random_Block[33], bool:isMusicPlaying = false, bool:userJetPack[33],
 	userName[33][33], userVarList[33][33], reconnectTable[33][33],
 	lightType[2], userClone[33], userBarHp[33], stuck[33], userClaimed[33], userNoClip[33], userGodMod[33], userButtonAfk[33], userVarMenu[33],
 	userHudDeal[33], userHudGet[33], userMoveAs[33], userMoverBlockColor[33], userAllowBuild[33], userTeam[33], userTeamMenu[33], userTeamSend[33],
-	userTeamBlock[33], userSaveOption[33],
+	userTeamBlock[33], userSaveOption[33], userJetpackSpeed[33] = 300,
 	sprite_bluez, team_spr, userMenuId, spriteBeam;
 
 
