@@ -26,6 +26,12 @@
 ## About
 - New Mod BaseBuilder
 
+## Features of the Mod
+- Copying blocks
+- Rotating blocks
+- Anti-Reconnect
+- Anti-AFK
+  
 ## Requirements
 - HLDS installed;
 - Installed AMXModX ([`v1.8.2`](https://www.amxmodx.org/downloads.php) or ([`v1.9`](https://www.amxmodx.org/downloads-new.php));
