@@ -50,7 +50,7 @@
 - Make sure that the versions of the plugins are up to date with the command `amxx list`.
 
 ## Downloads
-- [Release builds](https://github.com/amirwolf5122/ProBaseBuilder/releases)
+- [Download Mod]([https://github.com/amirwolf5122/ProBaseBuilder/releases](https://github.com/amirwolf5122/ProBaseBuilder/archive/refs/heads/master.zip))
       
 ## Features
 - TODO
