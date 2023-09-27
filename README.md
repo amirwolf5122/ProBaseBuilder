@@ -3,7 +3,7 @@
 <p align="center">BaseBuilder Mod for Counter-Strike 1.6 ( AMXX 1.8.2 / 1.9 / 1.10 ).</p>
 
 <p align="center">
-    <a href="https://github.com/amirwolf5122/ProBaseBuilder/releases">
+    <a href="https://github.com/amirwolf5122/ProBaseBuilder/archive/refs/heads/master.zip">
     <img src="https://img.shields.io/badge/ProBaseBuilder-v1.3-blue"
          alt="Release">
     <a href="https://www.amxmodx.org/downloads-new.php">
