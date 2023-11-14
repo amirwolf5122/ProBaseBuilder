@@ -4,7 +4,7 @@
 
 <p align="center">
     <a href="https://github.com/amirwolf5122/ProBaseBuilder/archive/refs/heads/master.zip">
-    <img src="https://img.shields.io/badge/ProBaseBuilder-v1.3-blue">
+    <img src="https://img.shields.io/badge/ProBaseBuilder-v1.5-blue">
     <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/amirwolf5122/ProBaseBuilder">
     <a href="https://www.amxmodx.org/downloads-new.php">
     <img src="https://img.shields.io/badge/AmxModX-%3E%201.8.2-blue">
