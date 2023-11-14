@@ -158,6 +158,9 @@ public menuConfirmationTeam_2(id,menu,item){
 	
 	new target = userTeamSend[id];
 	
+	if (!is_user_connected(id) || !is_user_connected(target)){
+		return;
+	}
 	if( item == MENU_EXIT ){
 		menu_destroy(menu);
 		return;

@@ -46,7 +46,7 @@ new const Float:hudPosHit[9][1] = { 0.4, 0.44, 0.48, 0.52, 0.56, 0.60, 0.64, 0.6
 new lightCharacter[] = "abcdefghijklmnopqrstuvwxyz";
 
 new Float:reconnectTableTime[33], Float:fOffset[33][3], Float:userAfkValue[33], Float:userPlayerSpeed[33] = 260.0, Float:userTeamLine[33],
-	bool:serverLetClone, bool:clockStop, bool:userReconnected[33], bool:userLockBlock[33], bool:AutoLockBlock[33], bool:userViewCamera[33],
+	serverLetClone, bool:clockStop, bool:userReconnected[33], bool:userLockBlock[33], bool:AutoLockBlock[33], bool:userViewCamera[33],
 	bool:userMusic[33], bool:ReviveUsedViP[33], bool:Color_Random_Block[33], bool:isMusicPlaying = false, bool:userJetPack[33],
 	userName[33][33], userVarList[33][33], reconnectTable[33][33],
 	lightType[2], userClone[33], userBarHp[33], stuck[33], userClaimed[33], userNoClip[33], userGodMod[33], userButtonAfk[33], userVarMenu[33],
@@ -119,3 +119,10 @@ new const symbolsCustom[TOTAL_SYMBOL_CUSTOM][] = {
 	,"^x5c^x79^xe2^x80^x94^x5c^x64^x20^x62^x79^x5c^x72^x20 \
 		^x4b^x6f^x52^x72^x4e^x69^x4b^x5c^x79^x20^xe2^x80^x94"
 };
+/*
+new const teamNames[4][2][]={
+	{"...",			"..."},
+	{"\yZombie\r",		"Zombie"},
+	{"\wBuilder\r",	"Builders"},
+	{"Spect",		"Spect"}
+}*/

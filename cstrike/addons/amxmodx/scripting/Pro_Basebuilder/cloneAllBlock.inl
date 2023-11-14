@@ -14,38 +14,46 @@ new szFile[88];
 new Float:userBlockConnectOrigin[2][3];
 new userBlockConnect[33];
 new bool:userBlockStart[33][2];
+
 public cloneOffset(id){
-	if( !has_flag(id, "a") ) return;
+	if(!has_flag(id, "a")) return; // Guard clause for admin check
+
+	// Local variable declaration
 	new szOffset[4];
 	read_argv(1, szOffset, sizeof(szOffset));
-	cloneBlockOffset=str_to_num(szOffset);
-	writeOffsetBlock();
-	adminLockBlock(id);	
-}
-public adminLockBlock(id){
+	cloneBlockOffset = str_to_num(szOffset); // Convert string to number
 	
-	if(!is_user_connected(id)) return 0;
-	if( !has_flag(id, "a" ) ) return 0;
-		
-	new gText[128], iLen;
-	iLen = format(gText[iLen], sizeof(gText)-iLen-1, "Block Menu")
-	iLen = format(gText[iLen], sizeof(gText)-iLen-1, "\d^nOffset: %d",cloneBlockOffset)
-	new menu=menu_create(gText, "adminLockBlock_2")
-	menu_additem(menu, "Lock/Unlock the Block")	
-	menu_additem(menu, "Delete Block")	
-	menu_additem(menu, "Save")	
-	menu_additem(menu, "Load")	
-	menu_additem(menu, "Reset")
-	format(gText, sizeof(gText), "Change offset: %d",cloneBlockOffset)
-	menu_additem(menu, gText);
-	if( !userBlockStart[id][0] )
-		menu_additem(menu, "Select a block")
-	else menu_additem(menu, "Connect the blocks")	
-	menu_additem(menu, "Reverse vec")
-	menu_additem(menu, "Reset vec")
+	writeOffsetBlock(); // Persist the new offset
+	adminLockBlock(id);	// Lock the block with admin privileges
+}
 
-	menu_display(id,menu,0);
-	return 1;
+public adminLockBlock(id) {
+    if (!is_user_connected(id) || !has_flag(id, "a")) {
+        return 0;
+    }
+    
+    new menu = menu_create("Block Menu", "adminLockBlock_2");
+    
+    // این تابع به جای تکرار کد، مسئول اضافه کردن آیتم‌ها به منو است
+    addMenuItems(menu, id);
+    
+    menu_display(id, menu, 0);
+    return 1;
+}
+
+// تابع کمکی جدید برای اضافه کردن آیتم‌ها به منو
+public addMenuItems(menu, id) {
+    menu_additem(menu, "Lock/Unlock the Block", "", 0);
+    menu_additem(menu, "Delete Block", "", 1);
+    menu_additem(menu, "Save", "", 2);
+    menu_additem(menu, "Load", "", 3);
+    menu_additem(menu, "Reset", "", 4);
+    new itemText[128];
+    format(itemText, sizeof(itemText), "Change offset: %d", cloneBlockOffset);
+    menu_additem(menu, itemText, "", 5);
+    menu_additem(menu, userBlockStart[id][0] ? "Connect the blocks" : "Select a block", "", 6);
+    menu_additem(menu, "Reverse vec", "", 7);
+    menu_additem(menu, "Reset vec", "", 8);
 }
 public removeColor(ent){	
 	set_pev(ent,pev_rendermode,kRenderNormal);
@@ -235,96 +243,94 @@ public rotateBlock(id){
 		
 	}
 }
+
 public autoLoadCloneBlock(){
-	if( file_exists(szFile) ){
-		loadCloneBlock();
-		serverLetClone=true;
-	}else serverLetClone=false;
+    serverLetClone = file_exists(szFile) ? true : false; // تبدیل مقدار به بولین صریح
+    if (serverLetClone) {
+        loadCloneBlock();
+    }
 }
-
 public cloneBlockFolder(){
-	new szDir[128];
-
+	new szDir[128], szFolder[64];
 	get_configsdir(szDir, sizeof(szDir));	
 	
-	new cloneBlock[][][] = {
-		{ "Offsetu", 	"CloneOffset" },
+	new const cloneBlock[][][] = {
+		{ "Offsetu", "CloneOffset" },
 		{ "Klonowania", "CloneBlock" }
-		
 	};
-	
-	new firstFolder[64];
 	
 	for(new i = 0; i < sizeof(cloneBlock); i ++){
 	
-		format(firstFolder, sizeof(firstFolder) - 1, "%s/%s", szDir, cloneBlock[i][1]);
+		format(szFolder, sizeof(szFolder) - 1, "%s/%s", szDir, cloneBlock[i][1]);
 	
-		if(!dir_exists(firstFolder)){
+		if(!dir_exists(szFolder)){
 			log_amx("=== The main folder has been created %s: %s ===", cloneBlock[i][0], cloneBlock[i][1]);
-			mkdir(firstFolder);
+			mkdir(szFolder);
 		}
 	}
 	
 }
 
-
+// بهینه‌سازی با استفاده از تابع برای خواندن و نوشتن مقادیر
 public readOffsetBlock(){	
 	new szOffsetFile[128];
-	new szFolder[32];
-	new szMap[32];
-	get_mapname(szMap, sizeof(szMap));
-	get_configsdir(szFolder, sizeof(szFolder));			
-	format(szOffsetFile,sizeof(szOffsetFile),"%s/CloneOffset/%s.bb", szFolder, szMap);
+	formatOffsetFilePath(szOffsetFile, sizeof(szOffsetFile));
 	
 	new file = fopen(szOffsetFile, "rt");
-	
-	new szData[4];
-	fgets(file, szData, sizeof(szData));
-	cloneBlockOffset=str_to_num(szData);
-	fclose(file);
+	if (file != INVALID_HANDLE) {
+		new szData[4];
+		fgets(file, szData, sizeof(szData));
+		cloneBlockOffset = str_to_num(szData);
+		fclose(file);
+	}
 }
+
 public writeOffsetBlock(){	
 	new szOffsetFile[128];
-	new szFolder[32];
-	new szMap[32];
+	formatOffsetFilePath(szOffsetFile, sizeof(szOffsetFile));
+	
+	new file = fopen(szOffsetFile, "wt");
+	if (file != INVALID_HANDLE) {
+		new szData[12];
+		format(szData, sizeof(szData), "%d", cloneBlockOffset);
+		fputs(file, szData);
+		fclose(file);
+	}
+}
+
+// ایجاد تابع مشترک برای تنظیم مسیر فایل
+public formatOffsetFilePath(outBuffer[], maxLen) {
+	new szFolder[32], szMap[32];
 	get_mapname(szMap, sizeof(szMap));
 	get_configsdir(szFolder, sizeof(szFolder));			
-	format(szOffsetFile,sizeof(szOffsetFile),"%s/CloneOffset/%s.bb", szFolder, szMap);
-	
-	new file = fopen(szOffsetFile, "wt");	
-	
-	new szData[4];
-	format(szData, sizeof(szData), "%d", cloneBlockOffset);
-	fputs(file, szData);
-	fclose(file);
+	format(outBuffer, maxLen, "%s/CloneOffset/%s.bb", szFolder, szMap);
 }
-public loadCloneBlock(){
-	new szData[256];
-	if( file_exists(szFile) ){	
-		new file = fopen(szFile, "rt");	
-		new szType[2];
-		new szEnt[5];
-		new szOrigin[3][17];
-		new szVec[3][17];
-		new szRotate[6];
+
+public loadCloneBlock() {
+	// استفاده از یک بوفر بزرگ‌تر برای خواندن داده‌ها
+	new szData[1024];
+	if (file_exists(szFile)) {
+		// اطمینان حاصل کنید که فایل در حالت خواندن باز شده است
+		new file = fopen(szFile, "rt");
+		if (file == INVALID_HANDLE) {
+			log_amx("Unable to open the file for reading: %s", szFile);
+			return;
+		}
+
+		// کشینگ متغیرهای مورد نیاز برای کاهش فراخوانی‌های تابع
+		new szType[2], szEnt[5], szOrigin[3][17], szVec[3][17], szRotate[6];
 		new Float:fOrigin[3], Float:fVec[3];
-		new szClass[10], szTarget[8];
+		new szClass[32], szTarget[32];
+
+		// حلقه برای خواندن هر خط از فایل
 		while( !feof(file) ){	
 			
 			fgets(file, szData, sizeof(szData));
-			parse(szData, 
-				szType, 	sizeof(szType),
-				szEnt, 		sizeof(szEnt),
-				szOrigin[0], 	sizeof(szOrigin[]),
-				szOrigin[1], 	sizeof(szOrigin[]),
-				szOrigin[2], 	sizeof(szOrigin[]),
-				szRotate,	sizeof(szRotate),
-				szVec[0], 	sizeof(szVec[]),
-				szVec[1], 	sizeof(szVec[]),
-				szVec[2], 	sizeof(szVec[])
-			);
-			
-			new ent = str_to_num(szEnt)+cloneBlockOffset;
+			parse(szData, szType, sizeof(szType), szEnt, sizeof(szEnt),
+				szOrigin[0], sizeof(szOrigin[]), szOrigin[1], sizeof(szOrigin[]),
+				szOrigin[2], sizeof(szOrigin[]), szRotate, sizeof(szRotate));
+				
+			new ent = str_to_num(szEnt) + cloneBlockOffset;
 			
 			if( !pev_valid(ent) || ent == 0 ) continue;
 			if( ent == g_iEntBarrier ) continue;
@@ -332,11 +338,9 @@ public loadCloneBlock(){
 			entity_get_string(ent, EV_SZ_classname, szClass, sizeof(szClass) - 1);
 			entity_get_string(ent, EV_SZ_targetname, szTarget, sizeof(szTarget) - 1);
 				
-				
-			if( !equal(szClass, "func_wall")) continue;
-			if( equal(szTarget, "ignore") ) continue;
-			if( equal(szTarget, "barrier") ) continue;
-			if( equal(szTarget, "JUMP") ) continue;
+			if (!equal(szClass, "func_wall") || equal(szTarget, "ignore") || equal(szTarget, "barrier")) {
+				continue;
+			}
 				
 			for( new i = 0;i <3; i ++ ){
 				fOrigin[i]=str_to_float(szOrigin[i]);
@@ -360,50 +364,61 @@ public loadCloneBlock(){
 		fclose(file);
 	}
 }
-public saveCloneBlock(){
-	new szData[128];
-	new file = fopen(szFile, "wt");
+public saveCloneBlock() {
+    new szData[256];
+    new file = fopen(szFile, "wt");
+    
+    // Check if the file is opened successfully
+    if (file == INVALID_HANDLE) {
+        log_amx("Unable to open the file for writing: %s", szFile);
+        return;
+    }
+    
+    new szClass[10], szTarget[8];
+    new Float:fOrigin[3], Float:fVec[3];
+    
+    // Loop through entities backwards, assuming MAXPLAYERS is less than 1024
+    for (new ent = 1024; ent > MAXPLAYERS; ent--) {
+        if (!pev_valid(ent) || ent == g_iEntBarrier) {
+            continue;
+        }
+        
+        // Retrieve entity class and target name once
+        entity_get_string(ent, EV_SZ_classname, szClass, sizeof(szClass) - 1);
+        entity_get_string(ent, EV_SZ_targetname, szTarget, sizeof(szTarget) - 1);
+        
+        // Combine conditions to reduce complexity
+        if (!equal(szClass, "func_wall") || equal(szTarget, "ignore") || equal(szTarget, "barrier")) {
+            continue;
+        }
+        
+        // Retrieve origin and custom vector once
+        pev(ent, pev_origin, fOrigin);
+        pev(ent, pev_vuser1, fVec);
+        
+        // Format and write data once per entity
+        format(szData, sizeof(szData), "%d %d %f %f %f %d %f %f %f^n", GetEntMover(ent), ent, fOrigin[0], fOrigin[1], fOrigin[2], entity_get_int(ent, EV_INT_team), fVec[0], fVec[1], fVec[2]);
+        fputs(file, szData);
+    }
+    
+    fclose(file);
+}
 	
-	new szClass[10], szTarget[8];
-	new Float:fOrigin[3], Float:fVec[3];
-	
-	if( file ){
-		for( new ent = 1024 ; ent> MAXPLAYERS; ent -- ){
-			
-			if(!pev_valid(ent)) continue;
-			if( ent == g_iEntBarrier ) continue;
+public clonePrepare() {
+    readOffsetBlock(); // Ensure that this function handles errors properly.
 
-			entity_get_string(ent, EV_SZ_classname, szClass, sizeof(szClass) - 1);
-			entity_get_string(ent, EV_SZ_targetname, szTarget, sizeof(szTarget) - 1);
-			
-			if(!equal(szClass, "func_wall")) continue;
-			if(equal(szTarget, "ignore")) continue;
-			if(equal(szTarget, "barrier")) continue;
-			
-			
-			pev(ent, pev_origin, fOrigin);
-			pev(ent, pev_vuser1, fVec);
-			format(szData, sizeof(szData), "%d %d %f %f %f %d %f %f %f^n", GetEntMover(ent), ent, fOrigin[0], fOrigin[1], fOrigin[2], entity_get_int(ent, EV_INT_team), fVec[0], fVec[1], fVec[2]);
-		
-			fputs(file, szData);
-			
-		}
-		fclose(file);
-	}
-	
-}	
-public clonePrepare(){
-	readOffsetBlock();
-	new szDir[128];
-	new szFolder[32];
-	new szMap[32];
-	get_mapname(szMap, sizeof(szMap));
-	get_configsdir(szFolder, sizeof(szFolder));		
-	format(szFile,sizeof(szFile),"%s/CloneBlock/%s.bb", szFolder, szMap);
-	autoLoadCloneBlock();
-	
-	get_basedir(szDir,sizeof(szDir));
-	
+    new szFolder[32], szMap[32];
+    get_mapname(szMap, sizeof(szMap));
+    get_configsdir(szFolder, sizeof(szFolder));
+    // Combine directory and file name formatting into one step to reduce complexity.
+    format(szFile, sizeof(szFile), "%s/CloneBlock/%s.bb", szFolder, szMap);
+
+    // Check if file exists and load the clone block accordingly.
+    // Encapsulate the condition in a function if it's used elsewhere as well.
+    serverLetClone = file_exists(szFile);
+    if (serverLetClone) {
+        loadCloneBlock();
+    }
 }
 
 stock BeamLight(Float:fOriginStart[3], Float:fOriginEnd[3], sprite, framestart, framerate, life, width, noise, r, g, b, bright, scroll){
