@@ -39,8 +39,8 @@ new Ham:Ham_Player_ResetMaxSpeed = Ham_Item_PreFrame
 #define FLAGS_INFOR		ADMIN_ALL
 #define FLAGS_LOCKAFTER	ADMIN_ALL 
 
-#define VERSION "7.4"
-#define MODNAME "^x03[^x04 BaseBuilder^x03 ]^x01"
+#define VERSION "1.5"
+#define MODNAME "^x03[^x04 Pro BaseBuilder^x03 ]^x01"
 
 #define LockBlock(%1,%2)  	( entity_set_int( %1, EV_INT_iuser1,     %2 ) )
 #define UnlockBlock(%1)   	( entity_set_int( %1, EV_INT_iuser1,     0  ) )
@@ -1315,7 +1315,7 @@ public logevent_round_start()
 	
 	print_color(0, "^x04 ---[ Base Builder %s ]---", VERSION);
 	print_color(0, "^x03 %L", LANG_SERVER, "ROUND_MESSAGE");
-	print_color(0, "^x03 To use Jetpack ---> Bind +jetpack");
+	print_color(0, "^x03 To use Jetpack ---> Bind z +jetpack");
 	
 	client_cmd(0,"mp3 stop");
 	set_lights("#OFF");
@@ -1367,6 +1367,8 @@ public task_CountDown()
 {
 	if (clockStop)
 	{
+		set_dhudmessage(clr(g_eSettings[DHUD_BUILD_TIME_COLOR][0]), clr(g_eSettings[DHUD_BUILD_TIME_COLOR][1]), clr(g_eSettings[DHUD_BUILD_TIME_COLOR][2]), g_eSettings[DHUD_BUILD_TIME_POSITION][0], g_eSettings[DHUD_BUILD_TIME_POSITION][1], 0, 1.0, 0.8, 0.4, 0.1);
+		show_dhudmessage(0, "[ Time Stop ]");
 		return PLUGIN_HANDLED;
 	}
 	
@@ -1450,8 +1452,11 @@ public task_PrepTime()
 {
 	if (clockStop)
 	{
+		set_dhudmessage(clr(g_eSettings[DHUD_BUILD_TIME_COLOR][0]), clr(g_eSettings[DHUD_BUILD_TIME_COLOR][1]), clr(g_eSettings[DHUD_BUILD_TIME_COLOR][2]), g_eSettings[DHUD_BUILD_TIME_POSITION][0], g_eSettings[DHUD_BUILD_TIME_POSITION][1], 0, 1.0, 0.8, 0.4, 0.1);
+		show_dhudmessage(0, "[ Time Stop ]");
 		return PLUGIN_HANDLED;
 	}
+	
 	
 	g_iCountDown--
 	
@@ -3063,27 +3068,30 @@ public colors_pushed(id, menu, item){
 		menu_destroy(menu)
 		return PLUGIN_CONTINUE
 	}
-	
-	static iAccess, szInfo[2], hCallback;
+
+	// Get the color info for the selected item.
+	new iAccess, szInfo[2], hCallback;
 	menu_item_getinfo(menu, item, iAccess, szInfo, 1, _, _, hCallback);
-	
-	if(szInfo[0] == '*') 
-	{
-		Color_Random_Block[id] = true
-		Color_Random_Block[userTeam[id]] = true
-	}
-	else
-	{
-		Color_Random_Block[id] = false
-		Color_Random_Block[userTeam[id]] = false
-	}
-	g_iColor[id] = item
-	g_iColor[userTeam[id]] = item
-	print_color(id, "%s You have picked^x04 %s^x01 as your color", MODNAME, g_szColorName[g_iColor[id]][ColorName])
-	
+
+	// Set the color random flag for the player and their team.
+	Color_Random_Block[id] = szInfo[0] == '*';
+	Color_Random_Block[userTeam[id]] = szInfo[0] == '*';
+
+	// Set the player's color.
+	g_iColor[id] = item;
+
+	// Set the team color.
+	g_iColor[userTeam[id]] = item;
+
+	// Print a message to the player.
+	print_color(id, "%s You have picked^x04 %s^x01 as your color", MODNAME, g_szColorName[g_iColor[id]][ColorName]);
+
+	// Execute the new color forward.
 	ExecuteForward(g_fwNewColor, g_fwDummyResult, id, g_iColor[id]);
+
 	return PLUGIN_CONTINUE
 }
+
 public show_zclass_menu(id,offset)
 {
 	if(offset<0) offset = 0
