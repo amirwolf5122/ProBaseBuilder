@@ -2534,7 +2534,7 @@ public cmdGrabEnt(id)
 	new ent, bodypart
 	get_user_aiming (id,ent,bodypart)
 	
-	if (!is_valid_ent(ent) || ent == g_iEntBarrier  || is_user_alive(ent) || IsMovingEnt(ent))
+	if (!is_valid_ent(ent) || ent == g_iEntBarrier || is_user_alive(ent) || IsMovingEnt(ent))
 		return PLUGIN_HANDLED;
 	
 	if ((BlockLocker(ent) && BlockLocker(ent) != id && BlockLocker(ent) != userTeam[id]) || (BlockLocker(ent) && !access(id, FLAGS_OVERRIDE)))
