@@ -1572,9 +1572,12 @@ public client_death(g_attacker, g_victim, wpnindex, hitplace, TK)
 			client_cmd(0, "mp3 play ^"%s^"", LASTHUMAN)
 			isMusicPlaying = true;
 			set_lights("c")
-			give_item(g_attacker, "weapon_hegrenade")
-			give_item(g_attacker, "weapon_smokegrenade")
-			set_task(5.0, "Random_Color", g_attacker+TASK_RESPAWN, _, _, "b");
+			if(cs_get_user_team(g_attacker) == CS_TEAM_CT)
+			{
+				give_item(g_attacker, "weapon_hegrenade")
+				give_item(g_attacker, "weapon_smokegrenade")
+				set_task(5.0, "Random_Color", g_attacker+TASK_RESPAWN, _, _, "b");
+			}
 		}
 	}
 	for (new iEnt = g_iMaxPlayers+1; iEnt < MAXENTS; iEnt++)
@@ -2531,7 +2534,7 @@ public cmdGrabEnt(id)
 	new ent, bodypart
 	get_user_aiming (id,ent,bodypart)
 	
-	if (!is_valid_ent(ent) || ent == g_iEntBarrier || IsMovingEnt(ent))
+	if (!is_valid_ent(ent) || ent == g_iEntBarrier  || is_user_alive(ent) || IsMovingEnt(ent))
 		return PLUGIN_HANDLED;
 	
 	if ((BlockLocker(ent) && BlockLocker(ent) != id && BlockLocker(ent) != userTeam[id]) || (BlockLocker(ent) && !access(id, FLAGS_OVERRIDE)))
@@ -2540,10 +2543,10 @@ public cmdGrabEnt(id)
 	new szClass[10], szTarget[7];
 	entity_get_string(ent, EV_SZ_classname, szClass, charsmax(szClass));
 	entity_get_string(ent, EV_SZ_targetname, szTarget, charsmax(szTarget));
-	if (access(id, FLAGS_BUILDBAN)){
+	/*if (access(id, FLAGS_BUILDBAN)){
 		if(!isPlayer(ent) && (!equal(szClass, "func_wall") || equal(szTarget, "ignore")))
 		return ent;
-	}else if(!equal(szClass, "func_wall") || equal(szTarget, "ignore"))
+	}else*/if(!equal(szClass, "func_wall") || equal(szTarget, "ignore"))
 			return ent;
 		
 	ExecuteForward(g_fwGrabEnt_Pre, g_fwDummyResult, id, ent);
