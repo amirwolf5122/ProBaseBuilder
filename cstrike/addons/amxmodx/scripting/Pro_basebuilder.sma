@@ -845,9 +845,11 @@ public plugin_init()
 
 public playerResetMaxSpeed(id)
 {
-	if (g_isZombie[id])
-		set_pev(id, pev_maxspeed, g_fPlayerSpeed[id])
-} 
+	if(is_user_alive(id) && g_isZombie[id] && entity_get_float(id, EV_FL_maxspeed) != 1.0)
+	{
+		entity_set_float(id, EV_FL_maxspeed, g_fPlayerSpeed[id])
+	}
+}
 
 public plugin_natives()
 {
@@ -1568,15 +1570,19 @@ public client_death(g_attacker, g_victim, wpnindex, hitplace, TK)
 		cs_set_user_team(g_victim, CS_TEAM_T)
 		g_isZombie[g_victim] = true
 		set_task(float(g_iInfectTime), "Respawn_Player", g_victim+TASK_RESPAWN)
-		if(gethumans() == 1 && !isMusicPlaying){
-			client_cmd(0, "mp3 play ^"%s^"", LASTHUMAN)
-			isMusicPlaying = true;
-			set_lights("c")
-			if(cs_get_user_team(g_attacker) == CS_TEAM_CT)
+		if(gethumans() == 1)
+		{
+			for(new i = 1; i <= g_iMaxPlayers; i++)
 			{
-				give_item(g_attacker, "weapon_hegrenade")
-				give_item(g_attacker, "weapon_smokegrenade")
-				set_task(5.0, "Random_Color", g_attacker+TASK_RESPAWN, _, _, "b");
+				if (is_user_alive(i) && cs_get_user_team(i) == CS_TEAM_CT && !isMusicPlaying)
+				{
+					client_cmd(0, "mp3 play ^"%s^"", LASTHUMAN)
+					isMusicPlaying = true;
+					set_lights("c")
+					give_item(i, "weapon_hegrenade")
+					give_item(i, "weapon_smokegrenade")
+					set_task(5.0, "Random_Color", i+TASK_RESPAWN, _, _, "b");
+				}
 			}
 		}
 	}
@@ -1603,12 +1609,17 @@ public Random_Color(iPlayer)
 		te_create_beam_ring(vpos, spriteBeam, .r = random(256), .g = random(256), .b = random(256))
 	}
 }
-gethumans() {
-	new count = 0
-	for(new i = 1; i <= g_iMaxPlayers; i++) {
-		if(is_user_alive(i) && !g_isZombie[i]) count++
-	}
-	return count;
+gethumans()
+{
+    static iAlive, id 
+    iAlive = 0 
+    
+    for (id = 1; id <= g_iMaxPlayers; id++) 
+    { 
+        if (is_user_alive(id) && cs_get_user_team(id) == CS_TEAM_CT) 
+            iAlive++ 
+    } 
+    return iAlive; 
 }
 
 public Respawn_Player(id)
