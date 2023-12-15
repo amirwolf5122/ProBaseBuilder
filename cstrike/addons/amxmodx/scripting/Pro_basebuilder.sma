@@ -1713,6 +1713,7 @@ public ham_PlayerSpawn_Post(id)
 			if( cs_get_user_team(id) == CS_TEAM_T ){
 				createBarHp(id)
 			}
+			ExecuteHamB(Ham_Player_ResetMaxSpeed, id)
 		}
 		else if (g_isCustomModel[id])
 		{
