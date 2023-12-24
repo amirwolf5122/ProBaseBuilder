@@ -19,5 +19,5 @@ jobs:
         tag_name: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
         prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        files: *
+        files: ProBaseBuilder
         draft: false
