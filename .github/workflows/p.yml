@@ -1,29 +1,18 @@
-# .github/workflows/build-docker-image.yml
-name: build-docker-image
-
-on: release
+on:
+  release:
+    types:
+      - created
 
 jobs:
-  build-docker-image:
-    name: Build and upload docker image
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Pull source
-        uses: actions/checkout@v1
+      - uses: actions/checkout@v4
 
-      - name: Build Docker image
-        uses: actions/docker/cli@master
-        with:
-          args: build . -t my-image
+      # steps for building assets
+      - run: echo "REPLACE ME!" > assets.txt
 
-      - name: Save the image
-        uses: actions/docker/cli@master
+      - uses: shogo82148/actions-upload-release-asset@v1
         with:
-          args: save my-image:latest
-
-      - name: Upload to release
-        uses: JasonEtco/upload-to-release@master
-        with:
-          args: my-image.tar
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: assets.txt
