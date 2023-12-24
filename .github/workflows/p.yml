@@ -1,7 +1,4 @@
-name: install
-on: 
-  workflow_dispatch
-  #on:
+on:
   release:
     types: [created]
 
