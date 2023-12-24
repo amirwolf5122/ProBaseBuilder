@@ -1,7 +1,5 @@
-on:
-  push:
-    tags:
-      - "v*"
+name: install
+on: workflow_dispatch
 
 jobs:
   build:
