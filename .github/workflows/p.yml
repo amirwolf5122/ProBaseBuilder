@@ -12,13 +12,13 @@ jobs:
 
       - name: Create a Release
         id: create_release
-        uses: shogo82148/actions-create-release@v1
+        uses: amirwolf5122/actions-create-release@v1
 
       # A release created by shogo82148/actions-create-release is alway draft here.
       # So users may not see an empty release.
 
       - name: Upload Assets
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: amirwolf5122/actions-upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: assets.txt
