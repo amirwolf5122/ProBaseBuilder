@@ -35,7 +35,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: artifact-${{ matrix.targetos }}-${{ matrix.targetarch }}
-        path: artifacts/*
+        path: cstrike/*
   flatpak:
     name: "Flatpak"
     runs-on: ubuntu-latest
@@ -60,7 +60,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: artifact-${{ matrix.targetos }}-${{ matrix.targetarch }}
-        path: artifacts/*
+        path: cstrike/*
   release:
     name: "Upload releases"
     runs-on: ubuntu-latest
@@ -79,14 +79,7 @@ jobs:
         path: artifacts/
     - name: Repackage binaries and allow GitHub to process removed release for few seconds
       run: |
-        cd artifacts/
-        for i in artifact-* su.xash.Engine.*; do
-          mv "$i"/* .
-          rm -rf "$i"
-        done
-        ls -R .
-        cd ../
-        sleep 20s
+        ls
     - name: Upload new release
       uses: FWGS/action-gh-release@v0.1.15
       with:
@@ -94,5 +87,5 @@ jobs:
         tag_name: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
         prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        files: artifacts/*
+        files: cstrike/*
         draft: false
