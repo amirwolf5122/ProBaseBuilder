@@ -1,6 +1,10 @@
-name: Build & Deploy Engine
-on: [push, pull_request]
-jobs:
+name: Draft Release
+on:
+  schedule:
+    - cron: '0 1 1 * *'
+    # At 01:00 on the first day of every month
+  workflow_dispatch:
+
 permissions:
   pull-requests: write
   contents: write
