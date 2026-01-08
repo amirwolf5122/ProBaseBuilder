@@ -326,7 +326,7 @@ public helpingMenu(id)
 	new target = g_SelectedUser[id];
 	if (target == id)
 	{
-		CC_SendMessage(id, "%s^x01 You cannot use the helping menut^x04 on yourself!", MODNAME);
+		CC_SendMessage(id, "%s^x01 You cannot use the helping menu^x04 on yourself!", MODNAME);
 		adminMenu(id);
 		return PLUGIN_HANDLED;
 	}
@@ -872,4 +872,5 @@ public SetRandomPlayerColor(id)
 		}
 		ExecuteForward(g_fwNewColor, g_fwDummyResult, teammate, iColorIndex);
 	}
+
 }
