@@ -889,7 +889,7 @@ public ev_Health(id)
 			szGoal, g_aColors[g_iColor[id]][Name]);
 	}
 	
-	if (!g_isZombie[id] && ArePlayersTeammates(id, userTeam[id]) && (g_boolCanBuild || g_boolPrepTime))
+	if (!g_isZombie[id] && ArePlayersInSameParty(id, userTeam[id]) && (g_boolCanBuild || g_boolPrepTime))
 	{
 		teamLineOrSprite(id);
 	}
@@ -1482,7 +1482,7 @@ public ham_PlayerSpawn_Post(id)
 		userAllowBuild[id] = false;
 	}
 	
-	if (ArePlayersTeammates(id, userTeam[id]))
+	if (ArePlayersInSameParty(id, userTeam[id]))
 	{
 		CheckTeamOnSpawn(id);
 	}
@@ -2115,7 +2115,7 @@ public cmdGrabEnt(id)
 			return PLUGIN_HANDLED;
 	}
 	
-	if ((BlockLocker(ent) && BlockLocker(ent) != id && !ArePlayersTeammates(id, BlockLocker(ent))) || (BlockLocker(ent) && !access(id, (g_bMoveLockBlocks ? ADMIN_ALL : FLAGS_OVERRIDE))))
+	if ((BlockLocker(ent) && BlockLocker(ent) != id && !ArePlayersInSameParty(id, BlockLocker(ent))) || (BlockLocker(ent) && !access(id, (g_bMoveLockBlocks ? ADMIN_ALL : FLAGS_OVERRIDE))))
 		return PLUGIN_HANDLED;
 		
 	ExecuteForward(g_fwGrabEnt_Pre, g_fwDummyResult, id, ent);
@@ -2139,7 +2139,7 @@ public cmdGrabEnt(id)
 	xs_vec_sub(gOrigin, vMoveTo, g_fOffset[id]);
 
 	new lastMover = GetLastMover(ent);
-	if (lastMover != 0 && lastMover != id && is_user_connected(lastMover) && !g_userClone[id] && !ArePlayersTeammates(id, lastMover))
+	if (lastMover != 0 && lastMover != id && is_user_connected(lastMover) && !g_userClone[id] && !ArePlayersInSameParty(id, lastMover))
 	{
 		new lastMoverName[32], entMoverName[32];
 		get_user_name(lastMover, lastMoverName, charsmax(lastMoverName));
@@ -2296,13 +2296,13 @@ public cmdStopEnt(id)
 	
 	if (blockLockerId)
 	{
-		if (access(id, FLAGS_OVERRIDE) && !ArePlayersTeammates(id, blockLockerId))
+		if (access(id, FLAGS_OVERRIDE) && !ArePlayersInSameParty(id, blockLockerId))
 		{
         	SetLockedBlock(ent, blockLockerId, g_bUserLockMode[blockLockerId], false);
     	}
 		else
 		{
-			if (ArePlayersTeammates(id, blockLockerId))
+			if (ArePlayersInSameParty(id, blockLockerId))
 			{
 				LockBlock(ent, id);
 				SetLockedBlock(ent, id, g_bUserLockMode[id], false);
@@ -2363,7 +2363,7 @@ public cmdLockBlock(id)
 	new blockLockerId = BlockLocker(ent);
 	if (blockLockerId)
 	{
-		if (g_iLockBlocks == 0 || blockLockerId == id || access(id, FLAGS_OVERRIDE) || ArePlayersTeammates(id, blockLockerId))
+		if (g_iLockBlocks == 0 || blockLockerId == id || access(id, FLAGS_OVERRIDE) || ArePlayersInSameParty(id, blockLockerId))
 		{
 			if (g_iLockBlocks == 1)
 			{
@@ -2528,7 +2528,7 @@ public fw_Traceline(Float:start[3], Float:end[3], conditions, id, trace)
 		{
 			new teammateId = userTeam[lockerId];
 			
-			if (ArePlayersTeammates(lockerId, teammateId))
+			if (ArePlayersInSameParty(lockerId, teammateId))
 			{
 				new szLockerName[32];
 				new szTeammateName[32];
@@ -2597,7 +2597,7 @@ public fw_Traceline(Float:start[3], Float:end[3], conditions, id, trace)
 				szPlayerName, pev(ent, pev_health), g_szPlayerClass[ent]);
 		}
 		
-		if (ArePlayersTeammates(id, ent))
+		if (ArePlayersInSameParty(id, ent))
 		{
 			iLen += formatex(szHudText[iLen], charsmax(szHudText) - iLen, "^n^xc2^xbb [ TEAM ] ^xc2^xab");
 		}
@@ -2709,7 +2709,7 @@ public colors_pushed(id, menu, item)
 	
 	new iColorIndex;
 	new teammate = userTeam[id];
-	new bool:bCanSyncTeamColor = (ArePlayersTeammates(id, teammate) && hasOption(userSaveOption[id], save_TEAM_COLOR) && hasOption(userSaveOption[teammate], save_TEAM_COLOR));
+	new bool:bCanSyncTeamColor = (ArePlayersInSameParty(id, teammate) && hasOption(userSaveOption[id], save_TEAM_COLOR) && hasOption(userSaveOption[teammate], save_TEAM_COLOR));
 	
 	if (szInfo[0] == '*')
 	{
