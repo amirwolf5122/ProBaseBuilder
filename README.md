@@ -1,4 +1,4 @@
-> ⚠️ **WARNING: This version is still in development. Possible bugs may be present.**
+> ⚠️ **WARNING: Possible bugs may be present.**
 
 # ProBaseBuilder
 
