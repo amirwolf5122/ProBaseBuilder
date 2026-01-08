@@ -1,0 +1,56 @@
+[en]
+ROUND_MESSAGE = To move objects and build, look at something and hold your '+use' key
+
+WIN_ZOMBIE = Zombies Win!
+WIN_BUILDER = Builders Win!
+
+DEATH_ZOMBIE = You've died!^nYou will respawn in %d seconds...
+DEATH_HUMAN = You have been infected!^nYou will respawn in %d seconds...
+
+BUILD_TIMER = Build Time
+PREP_TIMER = Prep Time
+
+SWAP_ANNOUNCE = The teams have been swapped
+PREP_ANNOUNCE = The survivors have been respawned to test their bases
+RELEASE_ANNOUNCE = The zombies have been released!
+INFECT_ANNOUNCE = The infection coarses through %s's blood
+
+ADMIN_REVIVE = An admin has respawned you
+ADMIN_GUNS = An admin has re-opened your guns menu
+ADMIN_BUILDBAN = An admin has %s your building privileges
+ADMIN_SWAP = An admin has swapped your team
+
+FAIL_KNIFE = You can only use your knife during the build phase
+FAIL_DROP = You cannot drop weapons
+FAIL_BUY = You aren't allowed to buy anything
+FAIL_SPAWN = You can't respawn right now!
+FAIL_ACCESS = You don't have access to this command
+FAIL_NAME = You have entered an invalid name
+FAIL_DEAD = The targeted player is dead
+FAIL_LOCK = You cannot lock/unlock blocks after the round has started
+
+COLOR_PICKED = Your color has been randomly chosen as
+COLOR_NONE = There is currently no one using
+COLOR_YOURS = Your color is
+COLOR_RANDOM = Your color has been randomly chosen as
+
+BUILD_SPAM = Please stop spamming the build command!
+BUILD_BANNED = You have been banned from building!
+BUILD_CLAIM_NEW = You have successfully claimed this object
+BUILD_CLAIM_MAX = You have already claimed the max (%d) objects
+BUILD_CLAIM_LOST = An object of yours has been unclaimed
+BUILD_CLAIM_FAIL = You cannot claim objects that have already been claimed
+BUILD_NOTIME = You can't move objects after the build time!
+
+OBJECT_MAX = max distance reached
+OBJECT_PUSH = pushing...
+OBJECT_MIN = minimum distance reached
+OBJECT_PULL = pulling...
+
+CLASS_CURRENT = This is already your current class
+CLASS_NO_ACCESS = Sorry, you don't have access to use this class
+CLASS_RESPAWN = Your new class will load when you respawn
+
+HUD_HEALTH = Health
+HUD_CLASS = Class
+HUD_GOAL = Credit Goal
