@@ -376,7 +376,7 @@ public helpingMenu(id)
 		formatex(gText, charsmax(gText), "\rRemove Team \r[ \y%s \r]", szTargetPlayerName);
 		menu_additem(menu, gText);
 	}
-	else if (ArePlayersOnSameTeam(id, target))
+	else if (ArePlayersOnSameTeam(id, target, false))
 	{
 		formatex(gText, charsmax(gText), "\yAdd Team \r[ \y%s \r]", szTargetPlayerName);
 		menu_additem(menu, gText);
@@ -508,7 +508,7 @@ public helpingMenu_2(id, menu, item)
 				removeOption(userSaveOption[id], save_TEAM_COLOR);
 				CC_SendMessage(id, "%s ^x04[Admin]^x01 You have disbanded the team", MODNAME);
 			}
-			else if (ArePlayersOnSameTeam(id, target))
+			else if (ArePlayersOnSameTeam(id, target, false))
 			{
 				new adminTeammate = userTeam[id];
 				if (adminTeammate != 0 && is_user_connected(adminTeammate))
@@ -872,5 +872,4 @@ public SetRandomPlayerColor(id)
 		}
 		ExecuteForward(g_fwNewColor, g_fwDummyResult, teammate, iColorIndex);
 	}
-
 }
