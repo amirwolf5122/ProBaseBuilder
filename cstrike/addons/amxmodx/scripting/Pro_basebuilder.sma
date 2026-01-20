@@ -29,8 +29,8 @@
 	#include <dhudmessage>
 #endif
 
-#define VERSION "4.0"
-#define MODNAME "^x03[^x04 BB ^x03]^x01"
+#define VERSION "4.1"
+#define MODNAME "^3[^4BB^3]^1"
 
 // --- General Constants ---
 #define MAXPLAYERS 32
@@ -161,6 +161,35 @@ static const szWeaponNames[24][23] =
 	"Dual Elite Berettas", "Fiveseven", "USP .45 ACP Tactical", "Glock 18C", "Desert Eagle .50 AE"
 };
 
+// Weapon CSW
+static const g_weaponCSW[24] = 
+{
+    CSW_SCOUT,
+	CSW_XM1014,
+	CSW_MAC10,
+	CSW_AUG,
+	CSW_UMP45,
+	CSW_SG550,
+	CSW_GALIL,
+	CSW_FAMAS,
+	CSW_AWP,
+	CSW_MP5NAVY,
+	CSW_M249,
+	CSW_M3,
+	CSW_M4A1,
+	CSW_TMP,
+	CSW_G3SG1,
+	CSW_SG552,
+	CSW_AK47,
+	CSW_P90,
+	CSW_P228,
+	CSW_ELITE,
+	CSW_FIVESEVEN,
+	CSW_USP,
+	CSW_GLOCK18,
+	CSW_DEAGLE
+};
+
 // --- Color System Definitions ---
 enum _:ColorData
 {
@@ -172,8 +201,8 @@ enum _:ColorData
 	AdminFlag
 }
 
-#define MAX_COLORS 24
-new const g_aColors[][ColorData] =
+#define MAX_COLORS 25
+new const g_aColors[MAX_COLORS][ColorData] =
 {
 	// Name,			Red, Green, Blue, RenderAmount, AdminFlag
 	{"Red",				200.0, 000.0, 000.0, 100.0,		ADMIN_ALL},
@@ -316,8 +345,8 @@ new const g_szZombieMiss[][] =
 // --- Includes ---
 #include "Pro_Basebuilder/vars.inl"
 #include "Pro_Basebuilder/team.inl"
-#include "Pro_Basebuilder/stocks.inl"
 #include "Pro_Basebuilder/cloneAllBlock.inl"
+#include "Pro_Basebuilder/stocks.inl"
 #include "Pro_Basebuilder/clone_rotate.inl"
 #include "Pro_Basebuilder/bb_menu.inl"
 
@@ -546,11 +575,11 @@ ReadFile()
 		else if (equal(szKey, "BB_SURVIVOR_RESPAWN_INFECTION")) g_iInfectTime = clamp(str_to_num(szValue), 0, 30);
 		else if (equal(szKey, "BB_SHOW_MOVERS")) g_iShowMovers = clamp(str_to_num(szValue), 0, 1);
 		else if (equal(szKey, "BB_LOCK_BLOCKS")) g_iLockBlocks = clamp(str_to_num(szValue), 0, 1);
-		else if (equal(szKey, "BB_LOCKMAX")) g_iLockMax = clamp(str_to_num(szValue), 10, 30);
-		else if (equal(szKey, "BB_MAX_USER_CLONES")) g_maxUserClones = clamp(str_to_num(szValue), 10, 30);
+		else if (equal(szKey, "BB_LOCKMAX")) g_iLockMax = clamp(str_to_num(szValue), 5, 40);
+		else if (equal(szKey, "BB_MAX_USER_CLONES")) g_maxUserClones = clamp(str_to_num(szValue), 5, 40);
 		else if (equal(szKey, "BB_COLOR_MODE")) g_iColorMode = clamp(str_to_num(szValue), 0, 2);
-		else if (equal(szKey, "BB_MAX_MOVE_DIST")) g_fEntMaxDist = str_to_float(szValue);
-		else if (equal(szKey, "BB_MIN_MOVE_SET")) g_fEntSetDist = str_to_float(szValue);
+		else if (equal(szKey, "BB_MAX_MOVE_DIST")) g_fEntMaxDist = floatclamp(str_to_float(szValue), 10.0, 900.0);
+		else if (equal(szKey, "BB_MIN_MOVE_SET")) g_fEntSetDist = floatclamp(str_to_float(szValue), 10.0, 100.0);
 		else if (equal(szKey, "BB_ZOMBIE_SUPERCUT")) g_iSupercut = clamp(str_to_num(szValue), 0, 1);
 		else if (equal(szKey, "BB_MOVE_LOCKED_BLOCKS")) g_bMoveLockBlocks = clamp(str_to_num(szValue), 0, 1);
 		else if (equal(szKey, "BB_GUNSMENU")) g_iGunsMenu = clamp(str_to_num(szValue), 0, 1);
@@ -560,7 +589,7 @@ ReadFile()
 		else if (equal(szKey, "DOOR_RANDOM_COLOR_ENABLED")) g_bColorDoorActive = clamp(str_to_num(szValue), 0, 1);
 		else if (equal(szKey, "BB_BLOCK_COLLISION")) g_bCheckForBlocker = clamp(str_to_num(szValue), 0, 1);
 		else if (equal(szKey, "BB_GRAB_PLAYERS")) g_bCanGrabPlayers = clamp(str_to_num(szValue), 0, 1);
-		else if (equal(szKey, "DOOR_COLOR_CHANGE_INTERVAL")) g_fColorDoorTime = str_to_float(szValue);
+		else if (equal(szKey, "DOOR_COLOR_CHANGE_INTERVAL")) g_fColorDoorTime = floatclamp(str_to_float(szValue), 1.0, 300.0);
 		
 		else if (equal(szKey, "DHUD_BUILD_TIME_COLOR")) ReadColorSetting(szValue, g_eSettings[DHUD_BUILD_TIME_COLOR]);
 		else if (equal(szKey, "DHUD_PREP_TIME_COLOR")) ReadColorSetting(szValue, g_eSettings[DHUD_PREP_TIME_COLOR]);
@@ -662,11 +691,6 @@ public client_putinserver(id)
 	
 	ResetPlayerData(id)
 	
-	if (!g_isMapConfigured && (access(id, FLAGS_FULLADMIN)))
-	{
-		set_task(10.0, "warn_map_config", id);
-	}
-	
 	set_task(5.0, "Respawn_Player", id + TASK_RESPAWN);
 	
 	return PLUGIN_CONTINUE;
@@ -696,13 +720,13 @@ public client_disconnect(id)
 	g_iOwnedEntities[id] = 0;
 	
 	ResetPlayerData(id)
+	leaveParty(id)
 	
 	for (new iEnt = MAXPLAYERS + 1; iEnt < MAXENTS; iEnt++)
 	{
 		if (is_valid_ent(iEnt) && BlockLocker(iEnt) == id)
 		{
 			new cloneEnt = g_iClonedEnts[iEnt];
-			
 			if (is_valid_ent(cloneEnt))
 			{
 				remove_entity(cloneEnt);
@@ -803,6 +827,7 @@ public ev_RoundStart()
 				remove_entity(cloneEnt);
 				g_iClonedEnts[iEnt] = 0;
 			}
+			
 			UnlockBlock(iEnt);
 		}
 		
@@ -822,7 +847,7 @@ public ev_RoundStart()
 			engfunc(EngFunc_SetOrigin, iEnt, fOrigin);
 			set_pev(iEnt, pev_rendermode, kRenderNormal);
 			set_pev(iEnt, pev_rendercolor, Float:{0.0, 0.0, 0.0});
-			set_pev(iEnt, pev_renderamt, 255.0);
+			set_pev(iEnt, pev_renderamt, Float:{255.0});
 		}
 	}
 }
@@ -924,7 +949,6 @@ public msgStatusIcon(const iMsgId, const iMsgDest, const iPlayer)
 			}
 		}
 	}
-	
 	return PLUGIN_CONTINUE;
 } 
 
@@ -981,11 +1005,10 @@ public messageSayText()
 	new arg[32];
 	get_msg_arg_string(2, arg, charsmax(arg));
 	
-	if(containi(arg,"name")!=-1)
+	if(containi(arg,"name")!= -1)
 	{
 		return PLUGIN_HANDLED;
 	}
-	
 	return PLUGIN_CONTINUE;
 }
 
@@ -1180,12 +1203,12 @@ public task_CountDown()
 		else
 		{
 			new mins = g_iCountDown / 60, secs = g_iCountDown % 60;
-			if (mins > 0 && secs == 0)
+			if (mins && !secs)
 			{
 				num_to_word(mins, szTimer, charsmax(szTimer));
 				client_cmd(0, "spk ^"vox/%s minutes remaining^"", szTimer);
 			}
-			else if (mins == 0 && secs == 30)
+			else if (!mins && secs == 30)
 			{
 				num_to_word(secs, szTimer, charsmax(szTimer));
 				client_cmd(0, "spk ^"vox/%s seconds remaining^"", szTimer);
@@ -1213,6 +1236,10 @@ public task_PrepTime()
 		if (g_iCountDown <= 10)
 		{
 			r = 255; g = 0; b = 0;
+			
+			static szTimer[32];
+			num_to_word(g_iCountDown, szTimer, charsmax(szTimer));
+			client_cmd(0, "spk ^"vox/%s^"", szTimer);
 		}
 		else
 		{
@@ -1220,16 +1247,8 @@ public task_PrepTime()
 			g = clr(g_eSettings[DHUD_PREP_TIME_COLOR][1]);
 			b = clr(g_eSettings[DHUD_PREP_TIME_COLOR][2]);
 		}
-		
 		set_dhudmessage(r, g, b, g_eSettings[DHUD_PREP_TIME_POSITION][0], g_eSettings[DHUD_PREP_TIME_POSITION][1], 0, 1.0, 0.8, 0.4, 0.1);
 		show_dhudmessage(0, "[ %L - 0:%02d ]", LANG_SERVER, "PREP_TIMER", g_iCountDown);
-
-		if (g_iCountDown > 0 && g_iCountDown <= 10)
-		{
-			static szTimer[32];
-			num_to_word(g_iCountDown, szTimer, charsmax(szTimer));
-			client_cmd(0, "spk ^"vox/%s^"", szTimer);
-		}
 	}
 	else
 	{
@@ -1265,9 +1284,6 @@ public logevent_round_end()
 		{
 			player = players[i];
 			
-			if (!is_user_connected(player))
-				continue;
-			
 			new CsTeams:new_team = (g_iTeam[player] == CS_TEAM_T) ? CS_TEAM_CT : CS_TEAM_T;
 			
 			cs_set_user_team(player, new_team);
@@ -1284,7 +1300,7 @@ public client_death(g_attacker, g_victim, wpnindex, hitplace, TK)
 	if (is_user_alive(g_victim) || !is_user_connected(g_victim) || !is_user_connected(g_attacker) || g_victim == g_attacker)
 		return PLUGIN_HANDLED;
 	
-	remove_task(g_victim+TASK_IDLESOUND);
+	remove_task(g_victim + TASK_IDLESOUND);
 	g_isAlive[g_victim] = false;
 	
 	if (TK == 0 && g_attacker != g_victim && g_isZombie[g_attacker])
@@ -1301,6 +1317,11 @@ public client_death(g_attacker, g_victim, wpnindex, hitplace, TK)
 	set_hudmessage(255, 255, 255, -1.0, 0.45, 0, 1.0, 10.0, 0.1, 0.2, 1);
 	if (g_isZombie[g_victim])
 	{
+		new origin[3]
+		get_user_origin(g_victim, origin);
+		origin[2] += 25;
+		
+		te_display_additive_sprite(origin, g_iSpriteIDs[SPRITE_SKULL]);
 		show_hudmessage(g_victim, "%L", LANG_SERVER, "DEATH_ZOMBIE", g_iZombieTime);
 		set_task(float(g_iZombieTime), "Respawn_Player", g_victim + TASK_RESPAWN);
 	}
@@ -1318,7 +1339,6 @@ public client_death(g_attacker, g_victim, wpnindex, hitplace, TK)
 		if (is_valid_ent(iEnt) && BlockLocker(iEnt) == g_victim)
 		{
 			new cloneEnt = g_iClonedEnts[iEnt];
-			
 			if (is_valid_ent(cloneEnt))
 			{
 				remove_entity(cloneEnt);
@@ -1383,7 +1403,7 @@ public ham_PlayerSpawn_Post(id)
 	
 	g_isZombie[id] = (cs_get_user_team(id) == CS_TEAM_T ? true : false);
 	
-	g_iTeam[id] = cs_get_user_team(id)
+	g_iTeam[id] = cs_get_user_team(id);
 	
 	remove_task(id + TASK_RESPAWN);
 	remove_task(id + TASK_MODELSET);
@@ -1451,7 +1471,8 @@ public ham_PlayerSpawn_Post(id)
 		
 		if ((g_iPrepTime && !g_boolCanBuild) || (g_boolCanBuild && !g_iPrepTime))
 		{
-			if (g_iGunsMenu) {
+			if (g_iGunsMenu)
+			{
 				#if defined BB_CREDITS
 					credits_show_gunsmenu(id);
 				#else
@@ -1468,6 +1489,11 @@ public ham_PlayerSpawn_Post(id)
 		g_fUserPlayerSpeed[id] = 260.0;
 	}
 	
+	if (!g_isMapConfigured && (access(id, FLAGS_FULLADMIN)))
+	{
+		set_task(10.0, "warn_map_config", id + TASK_HEALTH);
+	}
+	
 	set_task(0.1, "ev_Health", id + TASK_HEALTH);
 	
 	if (g_bHasReturnOrigin[id])
@@ -1475,7 +1501,7 @@ public ham_PlayerSpawn_Post(id)
 		g_bHasReturnOrigin[id] = false;
 	}
 	
-	if (userNoClip[id] || userGodMod[id] || userAllowBuild[id] || g_isBuildBan[id])
+	if (userNoClip[id] || userGodMod[id] || userAllowBuild[id])
 	{
 		userNoClip[id] = false;
 		userGodMod[id] = false;
@@ -1649,24 +1675,23 @@ public cmdSay(id)
 {
 	if (!g_isConnected[id])
 		return PLUGIN_HANDLED;
-
+	
 	new szFullMessage[192];
 	read_args(szFullMessage, charsmax(szFullMessage));
 	remove_quotes(szFullMessage);
 
 	if (szFullMessage[0] != '/')
 		return PLUGIN_CONTINUE;
-
+	
 	new szCommand[32], szArgs[160], szValue[12];
 	new szMessageWithoutSlash[191];
 	copy(szMessageWithoutSlash, charsmax(szMessageWithoutSlash), szFullMessage[1]);
 	parse(szMessageWithoutSlash, szCommand, charsmax(szCommand), szArgs, charsmax(szArgs), szValue, charsmax(szValue));
-		
+	
 	if (equali(szCommand, "commands") || equali(szCommand, "cmd"))
 	{
-		new szCommandList[512];
-		
-		formatex(szCommandList, charsmax(szCommandList), "%s /class, /respawn, /random, /mycolor, /guns, /team, /unstuck, +bb_copy, bb_rotate", MODNAME);
+		new szCommandList[128];
+		formatex(szCommandList, charsmax(szCommandList), "%s /class, /respawn, /random, /mycolor, /guns, /team, /unstuck", MODNAME);
 
 		if (g_iColorMode)
 		{
@@ -1680,6 +1705,10 @@ public cmdSay(id)
 		{
 			add(szCommandList, charsmax(szCommandList), ", /lock");
 		}
+		if (g_isMapConfigured)
+		{
+			add(szCommandList, charsmax(szCommandList), ", +bb_copy, bb_rotate");
+		}
 		
 		CC_SendMessage(id, "%s", szCommandList);
 		
@@ -1692,25 +1721,33 @@ public cmdSay(id)
 	else if (equali(szCommand, "class"))
 	{
 		show_zclass_menu(id);
+		return PLUGIN_HANDLED;
 	}
 	else if ((equali(szCommand, "lock") || equali(szCommand, "claim")) && g_isAlive[id])
 	{
 		if (!RequireAccess(id, FLAGS_LOCK)) return PLUGIN_HANDLED;
 		cmdLockBlock(id);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "whois"))
 	{
 		if (!g_iColorMode || szArgs[0] == EOS) return PLUGIN_HANDLED;
-
+		
+		new szColorName[64];
+		if (szValue[0] != EOS)
+			formatex(szColorName, charsmax(szColorName), "%s %s", szArgs, szValue);
+		else
+			copy(szColorName, charsmax(szColorName), szArgs);
+		
 		for (new i = 0; i < MAX_COLORS; i++)
 		{
-			if (equali(szArgs, g_aColors[i][Name]))
+			if (equali(szColorName, g_aColors[i][Name]))
 			{
 				if (g_iColorOwner[i])
 				{
 					new szPlayerName[32];
 					get_user_name(g_iColorOwner[i], szPlayerName, charsmax(szPlayerName));
-					CC_SendMessage(id, "%s^x04 %s^x01's color is^x04 %s", MODNAME, szPlayerName, g_aColors[i][Name]);
+					CC_SendMessage(id, "%s^x04 %s^x01's color is^x03 %s", MODNAME, szPlayerName, g_aColors[i][Name]);
 				}
 				else
 				{
@@ -1719,53 +1756,40 @@ public cmdSay(id)
 				break; 
 			}
 		}
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "colors"))
 	{
 		if (!g_isZombie[id] && g_boolCanBuild && g_iColorMode != 2)
 			show_colors_menu(id);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "team") || equali(szCommand, "t"))
 	{
 		teamOption(id);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "mycolor"))
 	{
 		if (!g_isZombie[id])
 			CC_SendMessage(id, "%s^x01 %L:^x04 %s", MODNAME, LANG_SERVER, "COLOR_YOURS", g_aColors[g_iColor[id]][Name]);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "random"))
 	{
 		SetRandomPlayerColor(id);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "unstuck") || equali(szCommand, "o") || equali(szCommand, "uk"))
 	{
 		cmdUnstuck(id);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "guns"))
 	{
 		if (!g_iGunsMenu || !g_isAlive[id] || g_isZombie[id]) return PLUGIN_HANDLED;
-		if (RequireAccess(id, FLAGS_GUNS))
-		{
-				if (szArgs[0])
-				{
-					new target = cmd_target(id, szArgs, 0);
-					if (target)
-					{
-						cmdGuns(id, target);
-					}
-					else PlayerNotFound(id, szArgs, 5);
-				}
-				else
-				{
-					#if defined BB_CREDITS
-						credits_show_gunsmenu(id);
-					#else
-						show_method_menu(id);
-					#endif
-				}
-		}
-		else if (!g_boolCanBuild && g_boolRepick[id])
+		
+		if (!g_boolCanBuild && g_boolRepick[id])
 		{
 			#if defined BB_CREDITS
 				credits_show_gunsmenu(id);
@@ -1780,11 +1804,33 @@ public cmdSay(id)
 				}
 			#endif
 		}
+		else if (RequireAccess(id, FLAGS_GUNS))
+		{
+			if (szArgs[0])
+			{
+				new target = cmd_target(id, szArgs, 0);
+				if (target)
+				{
+					cmdGuns(id, target);
+				}
+				else PlayerNotFound(id, szArgs, 5);
+			}
+			else
+			{
+				#if defined BB_CREDITS
+					credits_show_gunsmenu(id);
+				#else
+					show_method_menu(id);
+				#endif
+			}
+		}
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "adminmenu") || equali(szCommand, "a"))
 	{
 		if (!RequireAccess(id, FLAGS_BUILDBAN)) return PLUGIN_HANDLED;
 		adminMenu(id);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "swap") || equali(szCommand, "sp"))
 	{
@@ -1793,6 +1839,7 @@ public cmdSay(id)
 		new target = cmd_target(id, szArgs, 0);
 		if (target) cmdSwap(id, target);
 		else PlayerNotFound(id, szArgs, 1);
+		return PLUGIN_HANDLED;
 	}
 	else if ((equali(szCommand, "revive") || equali(szCommand, "rv")) && szArgs[0] != EOS)
 	{
@@ -1801,6 +1848,7 @@ public cmdSay(id)
 		new target = cmd_target(id, szArgs, 0);
 		if (target) cmdRevive(id, target);
 		else PlayerNotFound(id, szArgs, 0);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "respawn") || equali(szCommand, "revive") || equali(szCommand, "fixspawn"))
 	{
@@ -1808,6 +1856,7 @@ public cmdSay(id)
 			ExecuteHamB(Ham_CS_RoundRespawn, id);
 		else if (g_isZombie[id])
 			client_print(id, print_center, "%L", LANG_SERVER, "FAIL_SPAWN");
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "ban"))
 	{
@@ -1816,26 +1865,30 @@ public cmdSay(id)
 		new target = cmd_target(id, szArgs, 0);
 		if (target) cmdBuildBan(id, target);
 		else PlayerNotFound(id, szArgs, 2);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "releasezombies") || equali(szCommand, "opendor"))
 	{
 		if (!RequireAccess(id, FLAGS_RELEASE)) return PLUGIN_HANDLED;
 		cmdStartRound(id);
+		return PLUGIN_HANDLED;
 	}
-	else if (equali(szCommand, "teleport") || equali(szCommand, "tp"))
+	else if (equali(szCommand, "teleport") || equali(szCommand, "tp") && g_isAlive[id])
 	{
 		if (!RequireAccess(id, FLAGS_BUILDBAN)) return PLUGIN_HANDLED;
 		
 		new target = cmd_target(id, szArgs, 0);
 		if (target) cmdTeleport(id, target);
 		else PlayerNotFound(id, szArgs, 3);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "light") || equali(szCommand, "nor"))
 	{
 		if (!RequireAccess(id, FLAGS_FULLADMIN)) return PLUGIN_HANDLED;
 		light(id);
+		return PLUGIN_HANDLED;
 	}
-	else if (equali(szCommand, "hp"))
+	else if (equali(szCommand, "health") || equali(szCommand, "hp"))
 	{
 		if (!RequireAccess(id, FLAGS_SWAP)) return PLUGIN_HANDLED;
 		
@@ -1849,6 +1902,8 @@ public cmdSay(id)
 
 		if (target)
 		{
+			if (!g_isAlive[target]) return PLUGIN_HANDLED;
+			
 			set_user_health(target, get_user_health(target) + gValue);
 			
 			new szAction[64], szAmount[16];
@@ -1858,6 +1913,7 @@ public cmdSay(id)
 			ManagementAction(id, target, szAction, "Health", "", "", szAmount);
 			client_cmd(target, "spk %s", g_szSoundPaths[SOUND_HEALTH_POINTS]);
 		}
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "adminhelp") || equali(szCommand, "ah"))
 	{
@@ -1869,13 +1925,15 @@ public cmdSay(id)
 			g_SelectedUser[id] = target;
 			helpingMenu(id);
 		} else PlayerNotFound(id, szArgs, 4);
+		return PLUGIN_HANDLED;
 	}
 	else if (equali(szCommand, "Clonemenu"))
 	{
 		if (!RequireAccess(id, FLAGS_FULLADMIN)) return PLUGIN_HANDLED;
 		adminLockBlock(id)
+		return PLUGIN_HANDLED;
 	}
-	return PLUGIN_HANDLED_MAIN;
+	return PLUGIN_CONTINUE;
 }
 
 public cmdBuildBan(id, target)
@@ -1952,7 +2010,7 @@ public cmdSwap(id, target)
 	new player = FindPlayer(id, target, true);
 	if (!player) return PLUGIN_HANDLED;
 
-	cs_set_user_team(player,( g_iTeam[player] = g_iTeam[player] == CS_TEAM_T ? CS_TEAM_CT : CS_TEAM_T));
+	cs_set_user_team(player, (g_iTeam[player] = g_iTeam[player] == CS_TEAM_T ? CS_TEAM_CT : CS_TEAM_T));
 
 	if (is_user_alive(player))
 		ExecuteHamB(Ham_CS_RoundRespawn, player);
@@ -1970,10 +2028,10 @@ public cmdSwap(id, target)
 
 public cmdTeleport(id, target)
 {
-	if (!RequireAccess(id, FLAGS_REVIVE)) return PLUGIN_HANDLED;
+	if (!RequireAccess(id, FLAGS_REVIVE) || !g_isAlive[id]) return PLUGIN_HANDLED;
 
 	new player = FindPlayer(id, target);
-	if (!player) return PLUGIN_HANDLED;
+	if (!player || !g_isAlive[player]) return PLUGIN_HANDLED;
 	
 	if (player == id)
 	{
@@ -2030,7 +2088,7 @@ public Release_Zombies()
 
 			if (g_iPrimaryWeapon[player])
 			{
-				get_weaponname(g_iPrimaryWeapon[player],szWeapon,sizeof szWeapon - 1);
+				get_weaponname(g_iPrimaryWeapon[player], szWeapon, charsmax(szWeapon));
 				engclient_cmd(player, szWeapon);
 			}
 			fade_user_screen(player, 0.5, 2.0, ScreenFade_Modulate, .r = random(256), .g = random(256), .b = random(256), .a = 90);
@@ -2065,9 +2123,8 @@ public fw_CmdStart(id, uc_handle, randseed)
 		cmdStopEnt(id);
 		
 	if (button & IN_RELOAD && !(oldbutton & IN_RELOAD) && g_iOwnedEnt[id])
-	{
 		RotateBlock(id);
-	}
+		
 	return FMRES_IGNORED;
 }
 
@@ -2121,7 +2178,7 @@ public cmdGrabEnt(id)
 	ExecuteForward(g_fwGrabEnt_Pre, g_fwDummyResult, id, ent);
 
 	new iOrigin[3], Float:fOrigin[3], Float:gOrigin[3], Float:fLook[3], Float:iLook[3], Float:vMoveTo[3];
-		
+	
 	entity_get_vector(ent, EV_VEC_origin, gOrigin);
 	
 	g_fEntDist[id] = get_user_aiming(id, ent, bodypart);
@@ -2157,7 +2214,7 @@ public cmdGrabEnt(id)
 	{
 		if (!is_user_alive(ent) || !access(id, FLAGS_OVERRIDE))
 			return PLUGIN_HANDLED;
-
+		
 		new origin[3], start_pos[3], end_pos[3];
 		get_user_origin(ent, origin);
 		
@@ -2172,6 +2229,7 @@ public cmdGrabEnt(id)
 		fade_user_screen(ent, 3.0, 3.0, ScreenFade_FadeIn, 78, 255, 0, 20);
 		
 		ManagementAction(id, ent, "grabbed", "GRAB", "");
+		
 		client_cmd(ent, "spk %s", g_szSoundPaths[SOUND_GRAB_PLAYER]);
 		client_cmd(id, "spk %s", g_szSoundPaths[SOUND_GRAB_ADMIN]);
 	}
@@ -2197,42 +2255,33 @@ public cmdGrabEnt(id)
 			ent = cloneEnt;
 			g_userClone[id] = false;
 			g_numUserClones[id] ++;
-			client_print(id, print_center, "You have already cloned the maximum of [%d / %d] objects.", g_numUserClones[id], g_maxUserClones);
-		}
-		
-		if (BlockLocker(ent))
-		{
-			set_pev(ent, pev_renderfx, kRenderFxNone);
-			set_pev(ent, pev_rendermode, kRenderTransAdd);
-			set_pev(ent, pev_renderamt, 150.0);
 			
-			new cloneEnt = g_iClonedEnts[ent];
-			if (is_valid_ent(cloneEnt))
-			{
-				set_pev(cloneEnt, pev_renderfx, kRenderFxNone);
-				set_pev(cloneEnt, pev_rendermode, kRenderTransAlpha);
-				set_pev(cloneEnt, pev_renderamt, 0.0);
-			}
+			client_print(id, print_center, "You have already cloned the maximum of [%d / %d] objects.", g_numUserClones[id], g_maxUserClones);
 		}
 		else
 		{
-			switch(g_playerBlockRenderMode[id])
+			if (!BlockLocker(ent) || g_bBlockRandomColor[id])
 			{
-				case RENDER_MODE_NORMAL:
-				{
-					set_pev(ent, pev_rendermode, kRenderTransColor);
-					SetBlockRenderColor(ent, id);
-				}
-				case RENDER_MODE_TRANSPARENT:
-				{
-					set_pev(ent, pev_renderfx, kRenderFxNone);
-					set_pev(ent, pev_rendermode, kRenderTransTexture);
-					set_pev(ent, pev_renderamt, 200.0);
-				}
-				case RENDER_MODE_NO_COLOR:
+				if (g_playerBlockRenderMode[id] == RENDER_MODE_NO_COLOR)
 				{
 					set_pev(ent, pev_renderfx, kRenderFxNone);
 					set_pev(ent, pev_rendermode, kRenderNormal);
+				}
+				else
+				{
+					new Float:ent_mins[3], Float:ent_maxs[3];
+					get_block_origin(ent, ent_mins, ent_maxs);
+				
+					if (!g_bBlockRandomColor[id] && BlockCheck(id, ent, ent_mins, ent_maxs, CHECK_FOR_COLOR))
+					{
+						set_pev(ent, pev_renderfx, kRenderFxNone);
+						set_pev(ent, pev_rendermode, kRenderNormal);
+					}
+					else
+					{
+						set_pev(ent, pev_rendermode, kRenderTransColor);
+						SetBlockRenderColor(ent, id);
+					}
 				}
 			}
 		}
@@ -2268,32 +2317,9 @@ public cmdStopEnt(id)
 		UpdatePlayerGlow(ent);
 	}
 	
-	new blockLockerId = BlockLocker(ent);
-	
-	if (g_isMapConfigured && g_bCheckForBlocker && CheckForBlocker(id, ent))
-	{
-		if (blockLockerId)
-		{
-			new cloneEnt = g_iClonedEnts[ent];
-
-			if (is_valid_ent(cloneEnt))
-			{
-				remove_entity(cloneEnt);
-				g_iClonedEnts[ent] = 0;
-			}
-		}
-		remove_entity(ent);
-		g_iOwnedEnt[id] = 0;
-		
-		fade_user_screen(id, 1.0, 0.8, ScreenFade_FadeIn, 255, 0, 0, 150);
-		shake_user_screen(id, 8.0, 0.8, 180.0);
-		
-		client_cmd(id, "spk %s", g_szSoundPaths[SOUND_WARNING]);
-		return PLUGIN_HANDLED;
-	}
-	
 	ExecuteForward(g_fwDropEnt_Pre, g_fwDummyResult, id, ent);
 	
+	new blockLockerId = BlockLocker(ent);
 	if (blockLockerId)
 	{
 		if (access(id, FLAGS_OVERRIDE) && !ArePlayersInSameParty(id, blockLockerId))
@@ -2370,6 +2396,7 @@ public cmdLockBlock(id)
 				g_iOwnedEntities[blockLockerId]--;
 				client_print(blockLockerId, print_center, "%L [ %d / %d ]", LANG_SERVER, "BUILD_CLAIM_LOST", g_iOwnedEntities[blockLockerId], g_iLockMax);
 			}
+			
 			new cloneEnt = g_iClonedEnts[ent];
 			if (is_valid_ent(cloneEnt))
 			{
@@ -2379,6 +2406,7 @@ public cmdLockBlock(id)
 			
 			UnlockBlock(ent);
 			SetLastMover(ent, id);
+			set_pev(ent, pev_renderfx, kRenderFxNone);
 			set_pev(ent, pev_rendermode, kRenderNormal); 
 			client_cmd(id, "spk %s", g_szSoundPaths[SOUND_LOCK_OBJECT]);
 		}
@@ -2393,14 +2421,19 @@ public cmdLockBlock(id)
 		if (g_iLockBlocks == 0 || (g_iLockBlocks == 1 && (g_iOwnedEntities[id] < g_iLockMax || !g_iLockMax)))
 		{
 			LockBlock(ent, id);
-
 			if (g_iLockBlocks == 1)
 			{
 				g_iOwnedEntities[id]++;
 				client_print(id, print_center, "%L [ %d / %d ]", LANG_SERVER, "BUILD_CLAIM_NEW", g_iOwnedEntities[id], g_iLockMax);
 			}
-
-			SetLockedBlock(ent, id, g_bUserLockMode[id], true);
+			
+			new cloneEnt = createClone(ent);
+			if (is_valid_ent(cloneEnt))
+			{
+				g_iClonedEnts[ent] = cloneEnt;
+			}
+			
+			SetLockedBlock(ent, id, g_bUserLockMode[id]);
 			client_cmd(id, "spk %s", g_szSoundPaths[SOUND_LOCK_OBJECT]);
 		}
 		else
@@ -2469,8 +2502,14 @@ public fw_PlayerPreThink(id)
 	xs_vec_add(fOrigin, temp_vec, vMoveTo);
 	xs_vec_add(vMoveTo, g_fOffset[id], vMoveTo);
 	
-	if (g_bCanGrabPlayers && isPlayer(ent))
+	if (isPlayer(ent))
 	{
+		if (!g_bCanGrabPlayers || !g_boolCanBuild || !is_user_alive(ent) || !access(id, FLAGS_OVERRIDE))
+		{
+			cmdStopEnt(id);
+			return PLUGIN_HANDLED;
+		}
+		
 		new Float:fCurrentOrigin[3], Float:fVelocity[3];
 		entity_get_vector(ent, EV_VEC_origin, fCurrentOrigin);
 		
@@ -2522,8 +2561,12 @@ public fw_Traceline(Float:start[3], Float:end[3], conditions, id, trace)
 		new szHudText[256], iLen = 0;
 		set_hudmessage(0, 255, 255, -1.0, 0.16, 0, 0.1, 0.9, 0.1, 0.1);
 		
-		new lockerId = BlockLocker(ent);
+		if (g_userClone[id])
+		{
+			iLen = formatex(szHudText, charsmax(szHudText), "-- F --^n");
+		}
 		
+		new lockerId = BlockLocker(ent);
 		if (lockerId)
 		{
 			new teammateId = userTeam[lockerId];
@@ -2548,11 +2591,6 @@ public fw_Traceline(Float:start[3], Float:end[3], conditions, id, trace)
 		{
 			new lastMover = GetLastMover(ent);
 			new entMover = GetEntMover(ent);
-			
-			if (g_userClone[id])
-			{
-				iLen = formatex(szHudText, charsmax(szHudText), "-- F --^n");
-			}
 			
 			if (entMover == id && lastMover != 0 && lastMover != id)
 			{
@@ -2667,30 +2705,32 @@ public fw_Suicide(id) return FMRES_SUPERCEDE;
 
 public show_colors_menu(id)
 {
-	new menu = menu_create("\d[\r ProBuilder \d] \y- \wSelect Your Color\d: \y", "colors_pushed");
+	new szItemName[128], szItemInfo[8], iAdminReq;
+	formatex(szItemName, charsmax(szItemName), "\d[\r ProBuilder \d] \y- \wSelect Your Color\d:^n\yCurrent: \r%s \w", g_aColors[g_iColor[id]][Name]);
+	new menu = menu_create(szItemName, "colors_pushed");
 	
-	new szItemName[64], szItemInfo[8];
 	for (new i = 0; i < sizeof(g_aColors); i++)
 	{
-		if (g_aColors[i][AdminFlag] != ADMIN_ALL)
+		if (g_iColorMode == 0 || (g_iColorMode == 1 && !g_iColorOwner[i]))
 		{
-			formatex(szItemName, sizeof(szItemName), "%s \r[\yVIP\r]", g_aColors[i][Name]);
-		}
-		else
-		{
-			formatex(szItemName, sizeof(szItemName), g_aColors[i][Name]);
-		}
+			iAdminReq = g_aColors[i][AdminFlag];
 		
-		if (i == MAX_COLORS)
-		{
-			formatex(szItemInfo, sizeof(szItemInfo), "*");
+			if (i == g_iColor[id])
+			{
+				formatex(szItemName, charsmax(szItemName), "\d%s", g_aColors[i][Name]);
+			}
+			else if (iAdminReq != ADMIN_ALL)
+			{
+				formatex(szItemName, charsmax(szItemName), "%s%s %s", iAdminReq && access(id, iAdminReq) ? "" : "\d", g_aColors[i][Name], iAdminReq && access(id, iAdminReq) ? "" : "\r[\yVIP\r]");
+			}
+			else
+			{
+				formatex(szItemName, charsmax(szItemName), "%s", g_aColors[i][Name]);
+			}
+			
+			num_to_str(i, szItemInfo, charsmax(szItemInfo));
+			menu_additem(menu, szItemName, szItemInfo);
 		}
-		else
-		{
-			num_to_str(i, szItemInfo, sizeof(szItemInfo));
-		}
-
-		menu_additem(menu, szItemName, szItemInfo, g_aColors[i][AdminFlag]);
 	}
 	
 	menu_display(id, menu, 0);
@@ -2707,45 +2747,50 @@ public colors_pushed(id, menu, item)
 	new iAccess, szInfo[8], hCallback;
 	menu_item_getinfo(menu, item, iAccess, szInfo, charsmax(szInfo), _, _, hCallback);
 	
-	new iColorIndex;
+	new iColorIndex = str_to_num(szInfo);
+	new iAdminReq = g_aColors[iColorIndex][AdminFlag];
 	new teammate = userTeam[id];
 	new bool:bCanSyncTeamColor = (ArePlayersInSameParty(id, teammate) && hasOption(userSaveOption[id], save_TEAM_COLOR) && hasOption(userSaveOption[teammate], save_TEAM_COLOR));
 	
-	if (szInfo[0] == '*')
+	new bool:allowRandom = (iAdminReq && access(id, iAdminReq));
+	g_bBlockRandomColor[id] = allowRandom;
+	if (bCanSyncTeamColor)
 	{
-		iColorIndex = MAX_COLORS;
-		g_bBlockRandomColor[id] = true;
-		
-		if (bCanSyncTeamColor)
-		{
-			g_bBlockRandomColor[teammate] = true;
-		}
-	}
-	else
-	{
-		iColorIndex = str_to_num(szInfo);
-		g_bBlockRandomColor[id] = false;
-		
-		if (bCanSyncTeamColor)
-		{
-			g_bBlockRandomColor[teammate] = false;
-		}
+		g_bBlockRandomColor[teammate] = allowRandom;
 	}
 	
+	if (iColorIndex == g_iColor[id])
+	{
+		client_cmd(id, "spk %s", g_szSoundPaths[SOUND_LOCK_FAIL]);
+		CC_SendMessage(id, "%s^1 This is already your current color", MODNAME);
+		
+		show_colors_menu(id);
+		return PLUGIN_HANDLED;
+	}
+	
+	if ((iAdminReq != ADMIN_ALL || !iAdminReq) && !access(id, iAdminReq))
+	{
+		client_cmd(id, "spk %s", g_szSoundPaths[SOUND_LOCK_FAIL]);
+		CC_SendMessage(id, "%s^1 Sorry, you don't have access to use this color", MODNAME);
+		
+		show_colors_menu(id);
+		return PLUGIN_HANDLED;
+	}
+	
+	g_iColorOwner[iColorIndex] = id;
+	g_iColorOwner[g_iColor[id]] = 0;
 	g_iColor[id] = iColorIndex;
+	
 	if (bCanSyncTeamColor)
 	{
 		g_iColor[teammate] = iColorIndex;
+		
+		CC_SendMessage(teammate, "%s^x01 Your color was synced by your teammate to^x04 %s", MODNAME, g_aColors[iColorIndex][Name]);
+		ExecuteForward(g_fwNewColor, g_fwDummyResult, teammate, iColorIndex);
 	}
 	
 	CC_SendMessage(id, "%s^x01 You have picked^x04 %s^x01 as your color", MODNAME, g_aColors[iColorIndex][Name]);
 	ExecuteForward(g_fwNewColor, g_fwDummyResult, id, iColorIndex);
-	
-	if(bCanSyncTeamColor)
-	{
-		CC_SendMessage(teammate, "%s^x01 Your color was synced by your teammate to^x04 %s", MODNAME, g_aColors[iColorIndex][Name]);
-		ExecuteForward(g_fwNewColor, g_fwDummyResult, teammate, iColorIndex);
-	}
 	
 	menu_destroy(menu);
 	return PLUGIN_HANDLED;
@@ -2756,7 +2801,7 @@ public show_zclass_menu(id)
 	new menu = menu_create("\d[\r ProBuilder \d] \y- \wSelect Your Class:", "zclass_menu_handler");
 	
 	new szClassName[32], szClassInfo[32], iAdminReq;
-	new szMenuItem[128], szItemInfo[4];
+	new szMenuItem[128];
 	
 	for(new i = 0; i < g_iZClasses; i++)
 	{
@@ -2764,19 +2809,19 @@ public show_zclass_menu(id)
 		ArrayGetString(g_zclass_info, i, szClassInfo, charsmax(szClassInfo));
 		iAdminReq = ArrayGetCell(g_zclass_admin, i);
 		
-		num_to_str(i, szItemInfo, charsmax(szItemInfo));
-		
 		if (i == g_iZombieClass[id])
 		{
-			formatex(szMenuItem, charsmax(szMenuItem), "\d%s %s %s", szClassName, szClassInfo, iAdminReq == ADMIN_ALL ? "" : "\r(Admin Only)");
+			formatex(szMenuItem, charsmax(szMenuItem), "\d%s %s", szClassName, szClassInfo);
+		}
+		else if (iAdminReq != ADMIN_ALL)
+		{
+			formatex(szMenuItem, charsmax(szMenuItem), "%s%s \y%s %s", iAdminReq && access(id, iAdminReq) ? "" : "\d", szClassName, szClassInfo, iAdminReq && access(id, iAdminReq) ? "" : "\r[ \yAdmin\r ]");
 		}
 		else
 		{
-			formatex(szMenuItem, charsmax(szMenuItem), "\w%s \y%s %s", szClassName, szClassInfo, iAdminReq == ADMIN_ALL ? "" : "\r(Admin Only)");
+			formatex(szMenuItem, charsmax(szMenuItem), "%s \y%s", szClassName, szClassInfo);
 		}
-		
-		new admin_flags = (iAdminReq == ADMIN_ALL) ? 0 : iAdminReq;
-		menu_additem(menu, szMenuItem, szItemInfo, admin_flags);
+		menu_additem(menu, szMenuItem);
 	}
 	
 	menu_display(id, menu, 0);
@@ -2796,16 +2841,17 @@ public zclass_menu_handler(id, menu, item)
 		client_cmd(id, "spk %s", g_szSoundPaths[SOUND_LOCK_FAIL]);
 		CC_SendMessage(id, "%s %L", MODNAME, LANG_SERVER, "CLASS_CURRENT");
 		
-		menu_destroy(menu);
+		show_zclass_menu(id);
 		return PLUGIN_HANDLED;
 	}
 	
 	new iAdminReq = ArrayGetCell(g_zclass_admin, iClassIndex);
 	if ((iAdminReq != ADMIN_ALL || !iAdminReq) && !access(id, iAdminReq))
 	{
+		client_cmd(id, "spk %s", g_szSoundPaths[SOUND_LOCK_FAIL]);
 		CC_SendMessage(id, "%s %L", MODNAME, LANG_SERVER, "CLASS_NO_ACCESS");
 		
-		menu_destroy(menu);
+		show_zclass_menu(id);
 		return PLUGIN_HANDLED;
 	}
 	
@@ -2880,15 +2926,13 @@ public show_primary_menu(id)
 {
 	new menu = menu_create("\d[\rProBuilder\d] \y- \wPrimary Weapon:", "primary_weapon_handler");
 	
-	new flags = read_flags(g_pcvar_allowedweps);
-	new szItemInfo[4];
+	new szItemInfo[8], flags = read_flags(g_pcvar_allowedweps);
 	
 	for (new i = 0; i < 19; i++)
 	{
 		if (flags & (1 << i))
 		{
 			num_to_str(i, szItemInfo, charsmax(szItemInfo));
-			
 			menu_additem(menu, szWeaponNames[i], szItemInfo);
 		}
 	}
@@ -2904,7 +2948,7 @@ public primary_weapon_handler(id, menu, item)
 		return PLUGIN_HANDLED;
 	}
 	
-	new iAccess, szInfo[4], hCallback;
+	new iAccess, szInfo[8], hCallback;
 	menu_item_getinfo(menu, item, iAccess, szInfo, charsmax(szInfo), _, _, hCallback);
 	
 	g_iWeaponPicked[0][id] = str_to_num(szInfo);
@@ -2919,8 +2963,7 @@ public show_secondary_menu(id)
 {
 	new menu = menu_create("\d[\rProBuilder\d] \y- \wSecondary Weapon:", "secondary_weapon_handler");
 	
-	new flags = read_flags(g_pcvar_allowedweps);
-	new szItemInfo[4];
+	new szItemInfo[8], flags = read_flags(g_pcvar_allowedweps);
 	
 	for (new i = 18; i < 24; i++)
 	{
@@ -2938,12 +2981,11 @@ public secondary_weapon_handler(id, menu, item)
 {
 	if (item == MENU_EXIT)
 	{
-		g_iWeaponPicked[0][id] = 0;
 		menu_destroy(menu);
 		return PLUGIN_HANDLED;
 	}
 	
-	new iAccess, szInfo[4], hCallback;
+	new iAccess, szInfo[8], hCallback;
 	menu_item_getinfo(menu, item, iAccess, szInfo, charsmax(szInfo), _, _, hCallback);
 	
 	g_iWeaponPicked[1][id] = str_to_num(szInfo);
@@ -2957,82 +2999,21 @@ public secondary_weapon_handler(id, menu, item)
 public give_weapons(id)
 {
 	strip_user_weapons(id);
-	give_item(id,"weapon_knife");
+	give_item(id, "weapon_knife");
    
 	new szWeapon[32], csw;
-	csw = csw_contant(g_iWeaponPicked[0][id]);
-	get_weaponname(csw,szWeapon,charsmax(szWeapon));
-	give_item(id,szWeapon);
-	cs_set_user_bpammo(id,csw,999);
+	csw = g_weaponCSW[g_iWeaponPicked[0][id]];
+	get_weaponname(csw, szWeapon, charsmax(szWeapon));
+	give_item(id, szWeapon);
+	cs_set_user_bpammo(id, csw, 999);
 	g_iPrimaryWeapon[id] = csw;
 
-	csw = csw_contant(g_iWeaponPicked[1][id]);
-	get_weaponname(csw,szWeapon,charsmax(szWeapon));
-	give_item(id,szWeapon);
-	cs_set_user_bpammo(id,csw,999);
+	csw = g_weaponCSW[g_iWeaponPicked[1][id]];
+	get_weaponname(csw, szWeapon, charsmax(szWeapon));
+	give_item(id, szWeapon);
+	cs_set_user_bpammo(id, csw, 999);
 	
 	g_boolRepick[id] = false;
-}
-
-stock csw_contant(weapon)
-{
-	new num = 29;
-	switch(weapon)
-	{
-		case 0: num = 3
-		case 1: num = 5
-		case 2: num = 7
-		case 3: num = 8
-		case 4: num = 12
-		case 5: num = 13
-		case 6: num = 14
-		case 7: num = 15
-		case 8: num = 18
-		case 9: num = 19
-		case 10: num = 20
-		case 11: num = 21
-		case 12: num = 22
-		case 13: num = 23
-		case 14: num = 24
-		case 15: num = 27
-		case 16: num = 28
-		case 17: num = 30
-		case 18: num = 1
-		case 19: num = 10
-		case 20: num = 11
-		case 21: num = 16
-		case 22: num = 17
-		case 23: num = 26
-		case 24:
-		{
-			new flags = read_flags(g_pcvar_allowedweps);
-			do
-			{
-				num = random_num(0,18);
-				if(!(num & flags))
-				{
-					num = -1;
-				}
-			}
-			while(num==-1);
-			num = csw_contant(num);
-		}
-		case 25:
-		{
-			new flags = read_flags(g_pcvar_allowedweps);
-			do
-			{
-				num = random_num(18,23);
-				if(!(num & flags))
-				{
-					num = -1;
-				}
-			}
-			while(num==-1);
-			num = csw_contant(num);
-		}
-	}
-	return num;
 }
 
 Log(const message_fmt[], any:...)
@@ -3268,9 +3249,16 @@ public native_lock_block(entity)
 	if (is_valid_ent(entity) && !is_user_alive(entity) && !BlockLocker(entity))
 	{
 		LockBlock(entity, 33);
-		set_pev(entity,pev_rendermode,kRenderTransColor);
-		set_pev(entity,pev_rendercolor,Float:{LOCKED_COLOR});
-		set_pev(entity,pev_renderamt,Float:{LOCKED_RENDERAMT});
+		
+		new cloneEnt = createClone(entity);
+		if (is_valid_ent(cloneEnt))
+		{
+			g_iClonedEnts[entity] = cloneEnt;
+		}
+		
+		set_pev(entity, pev_rendermode, kRenderTransColor);
+		set_pev(entity, pev_rendercolor, Float:{LOCKED_COLOR});
+		set_pev(entity, pev_renderamt, Float:{LOCKED_RENDERAMT});
 	}
 }
 
@@ -3278,8 +3266,15 @@ public native_unlock_block(entity)
 {
 	if (is_valid_ent(entity) && !is_user_alive(entity) && BlockLocker(entity))
 	{
+		new cloneEnt = g_iClonedEnts[entity];
+		if (is_valid_ent(cloneEnt))
+		{
+			remove_entity(cloneEnt);
+			g_iClonedEnts[entity] = 0;
+		}
+		
 		UnlockBlock(entity);
-		set_pev(entity,pev_rendermode,kRenderNormal);
+		set_pev(entity, pev_rendermode, kRenderNormal);
 	}
 }
 
@@ -3295,7 +3290,7 @@ public native_release_zombies()
 
 public native_set_user_primary(id, csw_primary)
 {
-	if (CSW_P228<=csw_primary<=CSW_P90)
+	if (CSW_P228 <= csw_primary <= CSW_P90)
 	{
 		g_iPrimaryWeapon[id] = csw_primary;
 		return g_iPrimaryWeapon[id];
@@ -3320,7 +3315,6 @@ public native_block_in_zone(plugin_id, num_params)
 	if (BlockLocker(ent))
 	{
 		new cloneEnt = g_iClonedEnts[ent];
-
 		if (is_valid_ent(cloneEnt))
 		{
 			remove_entity(cloneEnt);
@@ -3336,23 +3330,15 @@ public native_block_in_zone(plugin_id, num_params)
 
 stock ResetPlayerData(id)
 {
-	userTeam[id] = 0;
 	userTeamMenu[id] = 0;
 	userTeamSend[id] = 0;
 	userTeamBlock[id] = 0;
 	userSaveOption[id] = 0;
-	userTeamLine[id] = 0.0;
 	
 	g_userClone[id] = 0;
 	g_numUserClones[id] = 0;
 	
 	g_fUserPlayerSpeed[id] = 0.0;
-	g_fAdminReturnOrigin[id][0] = 0.0;
-	g_fAdminReturnOrigin[id][1] = 0.0;
-	g_fAdminReturnOrigin[id][2] = 0.0;
-	g_fAdminReturnAngles[id][0] = 0.0;
-	g_fAdminReturnAngles[id][1] = 0.0;
-	g_fAdminReturnAngles[id][2] = 0.0;
 	
 	g_iTeam[id] = CS_TEAM_UNASSIGNED;
 	
