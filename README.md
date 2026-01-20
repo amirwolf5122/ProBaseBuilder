@@ -25,10 +25,20 @@
 - ProBaseBuilder is an enhanced version of the BaseBuilder mod for Counter-Strike 1.6, offering new features, improved gameplay mechanics, and seamless performance tailored for both players and administrators.
 
 ---
+## Map Setup Command
 
-## Commands
+> **Important Note:** To use the core features of the mod , the map must be configured first.
 
-## Player Commands
+| Command | Description |
+| :--- | :--- |
+| `/Clonemenu` | Opens a special admin menu for managing and cloning map blocks. |
+
+---
+<table>
+<tr>
+<td valign="top">
+
+### Player Commands
 
 | Command | Alias |
 | :--- | :--- |
@@ -45,33 +55,30 @@
 | `/unstuck` | `/uk` |
 | `/respawn` | `/revive` |
 
-## Admin Commands
+</td>
+<td valign="top">
+
+### Admin Commands
 
 | Command | Alias |
 | :--- | :--- |
-| `/adminmenu` | `/a` |
+| `/adminmenu` | `/a`, `C` |
 | `/adminhelp <player>`| `/ah` |
 | `bb_buildban <player>`| `/ban` |
 | `bb_swap <player>` | `/swap`, `/sp` |
 | `bb_revive <player>` | `/revive`, `/rv` |
 | `bb_teleport <player>`| `/tp` |
 | `bb_guns <player>` | - |
-| `/hp <player> <amount>`| `/health` |
+| `/health <player> <amount>`| `/hp` |
 | `/light` | `/nor` |
 | `bb_startround` | `/releasezombies`|
 | `/lock` | `/claim` |
 
----
-## Map Setup Command
-
-> **Important Note:** To use the core features of the mod , the map must be configured first.
-
-| Command | Description |
-| :--- | :--- |
-| `/Clonemenu` | Opens a special admin menu for managing and cloning map blocks. |
+</td>
+</tr>
+</table>
 
 ---
-
 ## Recommended Plugin for Team Balance (Optional)
 For optimal team balancing, it is recommended to use a plugin. Here are some suggestions:
 *   [Instant AutoTeamBalance](https://forums.alliedmods.net/showthread.php?t=79556)
