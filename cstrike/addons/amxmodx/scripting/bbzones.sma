@@ -5,7 +5,7 @@
 #include <hamsandwich>
 #include <xs>
 
-#define PLUGIN_VERSION "1.1"
+#define PLUGIN_VERSION "1.2"
 #define ADMIN_ACCESS ADMIN_RCON
 #define TASK_SHOWZONES 377737
 
@@ -469,58 +469,22 @@ CreateZone(Float:flFirstPoint[3], Float:flSecondPoint[3])
 	g_iTotalZones++
 }
 
-public CheckBlockInZone(id, ent)
+public CheckBlockInZone(id, ent, Float:mins_x, Float:mins_y, Float:mins_z, Float:maxs_x, Float:maxs_y, Float:maxs_z)
 {
 	if (!is_valid_ent(ent))
 	{
 		return;
 	}
 	
-	static Float:ent_origin[3], Float:ent_angles[3];
-	static Float:ent_mins[3], Float:ent_maxs[3];
-	pev(ent, pev_origin, ent_origin);
-	pev(ent, pev_angles, ent_angles);
-	pev(ent, pev_mins, ent_mins);
-	pev(ent, pev_maxs, ent_maxs);
+	new Float:mins[3];
+	mins[0] = mins_x;
+	mins[1] = mins_y;
+	mins[2] = mins_z;
 	
-	static Float:local_corners[8][3];
-	for (new i = 0; i < 8; i++)
-	{
-		local_corners[i][0] = (i & 1) ? ent_maxs[0] : ent_mins[0];
-		local_corners[i][1] = (i & 2) ? ent_maxs[1] : ent_mins[1];
-		local_corners[i][2] = (i & 4) ? ent_maxs[2] : ent_mins[2];
-	}
-	
-	static Float:fwd[3], Float:up[3], Float:right[3];
-	xs_anglevectors(ent_angles, fwd, right, up);
-	new Float:left[3];
-	xs_vec_neg(right, left);
-	
-	static Float:world_corners[8][3];
-	for (new i = 0; i < 8; i++)
-	{
-		new Float:rotated_offset[3];
-		xs_vec_mul_scalar(fwd, local_corners[i][0], rotated_offset);
-		xs_vec_mul_add(left, local_corners[i][1], rotated_offset, rotated_offset);
-		xs_vec_mul_add(up, local_corners[i][2], rotated_offset, rotated_offset);
-		xs_vec_add(ent_origin, rotated_offset, world_corners[i]);
-	}
-	
-	static Float:rotated_mins[3], Float:rotated_maxs[3];
-	
-	xs_vec_copy(world_corners[0], rotated_mins);
-	xs_vec_copy(world_corners[0], rotated_maxs);
-	
-	for (new i = 1; i < 8; i++)
-	{
-		if (world_corners[i][0] < rotated_mins[0]) rotated_mins[0] = world_corners[i][0];
-		if (world_corners[i][1] < rotated_mins[1]) rotated_mins[1] = world_corners[i][1];
-		if (world_corners[i][2] < rotated_mins[2]) rotated_mins[2] = world_corners[i][2];
-		
-		if (world_corners[i][0] > rotated_maxs[0]) rotated_maxs[0] = world_corners[i][0];
-		if (world_corners[i][1] > rotated_maxs[1]) rotated_maxs[1] = world_corners[i][1];
-		if (world_corners[i][2] > rotated_maxs[2]) rotated_maxs[2] = world_corners[i][2];
-	}
+	new Float:maxs[3];
+	maxs[0] = maxs_x;
+	maxs[1] = maxs_y;
+	maxs[2] = maxs_z;
 	
 	new zoneEnt = -1;
 	while ((zoneEnt = find_ent_by_class(zoneEnt, g_szClassname)))
@@ -529,7 +493,7 @@ public CheckBlockInZone(id, ent)
 		pev(zoneEnt, pev_absmin, zone_absmin);
 		pev(zoneEnt, pev_absmax, zone_absmax);
 		
-		if (DoBoxesIntersect(rotated_mins, rotated_maxs, zone_absmin, zone_absmax))
+		if (DoBoxesIntersect(mins, maxs, zone_absmin, zone_absmax))
 		{
 			notify_block_in_zone(ent);
 			return;
@@ -539,23 +503,10 @@ public CheckBlockInZone(id, ent)
 
 stock bool:DoBoxesIntersect(const Float:mins1[3], const Float:maxs1[3], const Float:mins2[3], const Float:maxs2[3])
 {
-    if (maxs1[0] < mins2[0] || mins1[0] > maxs2[0])
-        return false;
-	
-    if (maxs1[1] < mins2[1] || mins1[1] > maxs2[1])
-        return false;
-	
-    if (maxs1[2] < mins2[2] || mins1[2] > maxs2[2])
-        return false;
-	
-    return true;
-}
-
-stock xs_vec_mul_add(const Float:v1[3], const Float:s, const Float:v2[3], Float:out[3])
-{
-	out[0] = v1[0] * s + v2[0];
-	out[1] = v1[1] * s + v2[1];
-	out[2] = v1[2] * s + v2[2];
+	if (maxs1[0] < mins2[0] || mins1[0] > maxs2[0]) return false;
+	if (maxs1[1] < mins2[1] || mins1[1] > maxs2[1]) return false;
+	if (maxs1[2] < mins2[2] || mins1[2] > maxs2[2]) return false;
+	return true;
 }
 
 public showZones(id)
