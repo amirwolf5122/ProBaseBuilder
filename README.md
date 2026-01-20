@@ -72,6 +72,11 @@
 
 ---
 
+## Recommended Plugin for Team Balance (Optional)
+For optimal team balancing, it is recommended to use a plugin. Here are some suggestions:
+*   [Instant AutoTeamBalance](https://forums.alliedmods.net/showthread.php?t=79556)
+*   [Teams Manager All-In-One](https://forums.alliedmods.net/showthread.php?t=177592)
+---
 ## Downloads
 - [Download the Latest Version](https://github.com/amirwolf5122/ProBaseBuilder/archive/refs/heads/master.zip)
 
