@@ -1852,7 +1852,11 @@ public cmdSay(id)
 	}
 	else if (equali(szCommand, "respawn") || equali(szCommand, "revive") || equali(szCommand, "fixspawn"))
 	{
-		if ((g_boolCanBuild && !g_isZombie[id]) || (g_isZombie[id] && (!is_user_alive(id) || pev(id, pev_health) == float(ArrayGetCell(g_zclass_hp, g_iZombieClass[id])))))
+		if (!g_bUsedVipSpawn[id] && access(id, FLAGS_VIP) && g_boolPrepTime && !g_isZombie[id])
+		{
+			ExecuteHamB(Ham_CS_RoundRespawn, id);
+			g_bUsedVipSpawn[id] = true;
+		}else if ((g_boolCanBuild && !g_isZombie[id]) || (g_isZombie[id] && (!is_user_alive(id) || pev(id, pev_health) == float(ArrayGetCell(g_zclass_hp, g_iZombieClass[id])))))
 			ExecuteHamB(Ham_CS_RoundRespawn, id);
 		else if (g_isZombie[id])
 			client_print(id, print_center, "%L", LANG_SERVER, "FAIL_SPAWN");
@@ -2204,6 +2208,7 @@ public cmdGrabEnt(id)
 
 		CC_SendMessage(lastMover, "%s ^x04%s ^x01Your block has been moved by ^x04%s ", MODNAME, lastMoverName, entMoverName);
 		CC_SendMessage(id, "%s ^x04[Warning] ^x01You have moved a block that belongs to ^x04%s", MODNAME, lastMoverName);
+		CC_SendMessage(0,"%s ^x04%s ^x01moved a block that belongs to ^x04%s", MODNAME, entMoverName, lastMoverName);
 		
 		fade_user_screen(id, 1.0, 0.8, ScreenFade_FadeIn, 255, 255, 0, 150);
 		shake_user_screen(id, 8.0, 0.8, 180.0);
