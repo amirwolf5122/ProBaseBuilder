@@ -2272,8 +2272,14 @@ public cmdGrabEnt(id)
 			}
 			else
 			{
-				if (!BlockLocker(ent))
+				if (BlockLocker(ent))
 				{
+					set_pev(ent, pev_rendermode, kRenderTransColor);
+					SetBlockRenderColor(ent, id);
+				}
+				else
+				{
+				
 					if (g_playerBlockRenderMode[id] == RENDER_MODE_NO_COLOR)
 					{
 						set_pev(ent, pev_renderfx, kRenderFxNone);
@@ -2762,21 +2768,19 @@ public colors_pushed(id, menu, item)
 	
 	new iColorIndex = str_to_num(szInfo);
 	new iAdminReq = g_aColors[iColorIndex][AdminFlag];
-	new teammate = userTeam[id];
-	new bool:bCanSyncTeamColor = (ArePlayersInSameParty(id, teammate) && hasOption(userSaveOption[id], save_TEAM_COLOR) && hasOption(userSaveOption[teammate], save_TEAM_COLOR));
-	
-	new bool:allowRandom = (iAdminReq && access(id, iAdminReq));
-	g_bBlockRandomColor[id] = allowRandom;
-	if (bCanSyncTeamColor)
-	{
-		g_bBlockRandomColor[teammate] = allowRandom;
-	}
 	
 	if (iColorIndex == g_iColor[id])
 	{
 		client_cmd(id, "spk %s", g_szSoundPaths[SOUND_LOCK_FAIL]);
 		CC_SendMessage(id, "%s^1 This is already your current color", MODNAME);
 		
+		show_colors_menu(id);
+		return PLUGIN_HANDLED;
+	}
+	
+	if (g_iColorMode == 1 && g_iColorOwner[iColorIndex] != 0)
+	{
+		CC_SendMessage(id, "%s^1 Sorry, the selected color is not available. Please choose another", MODNAME);
 		show_colors_menu(id);
 		return PLUGIN_HANDLED;
 	}
@@ -2788,6 +2792,15 @@ public colors_pushed(id, menu, item)
 		
 		show_colors_menu(id);
 		return PLUGIN_HANDLED;
+	}
+	
+	new teammate = userTeam[id];
+	new bool:bCanSyncTeamColor = (ArePlayersInSameParty(id, teammate) && hasOption(userSaveOption[id], save_TEAM_COLOR) && hasOption(userSaveOption[teammate], save_TEAM_COLOR));
+	new bool:allowRandom = (iAdminReq && access(id, iAdminReq));
+	g_bBlockRandomColor[id] = allowRandom;
+	if (bCanSyncTeamColor)
+	{
+		g_bBlockRandomColor[teammate] = allowRandom;
 	}
 	
 	g_iColorOwner[iColorIndex] = id;
@@ -3032,18 +3045,18 @@ public give_weapons(id)
 Log(const message_fmt[], any:...)
 {
 	static message[256];
-	vformat(message, sizeof(message) - 1, message_fmt, 2);
+	vformat(message, charsmax(message), message_fmt, 2);
 	
 	static filename[96];
 	static dir[64];
 	if(!dir[0])
 	{
-		get_basedir(dir, sizeof(dir) - 1);
-		add(dir, sizeof(dir) - 1, "/logs");
+		get_basedir(dir, charsmax(dir));
+		add(dir, charsmax(dir), "/logs");
 	}
 	
-	format_time(filename, sizeof(filename) - 1, "%m-%d-%Y");
-	format(filename, sizeof(filename) - 1, "%s/BaseBuilder_%s.log", dir, filename);
+	format_time(filename, charsmax(filename), "%m-%d-%Y");
+	format(filename, charsmax(filename), "%s/BaseBuilder_%s.log", dir, filename);
 	
 	log_to_file(filename, "%s", message);
 }
@@ -3315,12 +3328,7 @@ public native_set_user_primary(id, csw_primary)
 public native_block_in_zone(plugin_id, num_params)
 {
 	new ent = get_param(1);
-	if (!is_valid_ent(ent))
-	{
-		return;
-	}
-	
-	if (isPlayer(ent))
+	if (!is_valid_ent(ent) || isPlayer(ent))
 	{
 		return;
 	}
@@ -3335,10 +3343,7 @@ public native_block_in_zone(plugin_id, num_params)
 		}
 	}
 	
-	if (is_valid_ent(ent))
-	{
-		remove_entity(ent);
-	}
+	remove_entity(ent);
 }
 
 stock ResetPlayerData(id)
