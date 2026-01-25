@@ -73,9 +73,8 @@
 
 ---
 ### Settings
-- `Pro_basebuilder.ini`
 <details>
-<summary><code><strong>「 Click to expand view content 」</strong></code></summary>
+<summary><code><strong>「 Pro_basebuilder.ini 」</strong></code></summary>
 
 * * *
 ```bash
