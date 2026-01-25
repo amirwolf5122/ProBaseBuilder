@@ -2167,7 +2167,7 @@ public cmdGrabEnt(id)
 	
 	if (isPlayer(ent))
 	{
-		if (!g_bCanGrabPlayers || !g_boolCanBuild || !is_user_alive(ent) || !access(id, FLAGS_OVERRIDE))
+		if (!g_bCanGrabPlayers || !is_user_alive(ent) || !access(id, FLAGS_OVERRIDE))
 			return PLUGIN_HANDLED;
 	}
 	else 
@@ -2523,7 +2523,7 @@ public fw_PlayerPreThink(id)
 	
 	if (isPlayer(ent))
 	{
-		if (!g_bCanGrabPlayers || !g_boolCanBuild || !is_user_alive(ent) || !access(id, FLAGS_OVERRIDE))
+		if (!g_bCanGrabPlayers || !is_user_alive(ent) || !access(id, FLAGS_OVERRIDE))
 		{
 			cmdStopEnt(id);
 			return PLUGIN_HANDLED;
