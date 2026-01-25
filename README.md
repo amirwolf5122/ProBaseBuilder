@@ -24,7 +24,7 @@
 | Command | Description |
 | :--- | :--- |
 | `/Clonemenu` | Opens a special admin menu for managing and cloning map blocks. |
-| `/bbzones` | Opens a special admin menu for To create no build Zones. |
+| `/bbzones` | Opens a special admin menu for To create no build Zones. `/point`|
 
 ---
 <table>
