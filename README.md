@@ -12,12 +12,6 @@
     <img src="https://img.shields.io/badge/AmxModX-%3E%201.8.2-blue">
 
 </p>
-      
-<p align="center">
-  <a href="#about">About</a> •
-  <a href="#downloads">Downloads</a> •
-  <a href="#youtube">YouTube</a>
-</p>
 
 ---
 ## About
