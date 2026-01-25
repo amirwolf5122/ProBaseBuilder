@@ -190,6 +190,17 @@ static const g_weaponCSW[24] =
 	CSW_DEAGLE
 };
 
+// Entity classes whose damage should be blocked
+static const g_szBlockedDamageClasses[][] = 
+{
+	"trigger_hurt",
+	"func_rotating",
+	"func_door_rotating",
+	"func_train",
+	"env_laser",
+	"env_beam"
+};
+
 // --- Color System Definitions ---
 enum _:ColorData
 {
@@ -1028,21 +1039,40 @@ public ham_WeaponCleaner_Post(iEnt)
 
 public ham_TakeDamage(victim, inflictor, attacker, Float:damage, damagebits)
 {
-	if (!is_valid_ent(victim) || !is_user_alive(victim) || !is_user_connected(attacker) || g_isZombie[attacker] == g_isZombie[victim])
+	if (!is_user_alive(victim))
 		return HAM_IGNORED;
+		
+	if (!is_user_connected(attacker) && attacker != victim)
+	{
+		static szClassName[32];
+		pev(inflictor, pev_classname, szClassName, charsmax(szClassName));
+		
+		for (new i = 0; i < sizeof(g_szBlockedDamageClasses); i++)
+		{
+			if (equal(szClassName, g_szBlockedDamageClasses[i]))
+			{
+				return HAM_SUPERCEDE;
+			}
+		}
+	}
+	if (is_user_connected(attacker) && g_isZombie[attacker] != g_isZombie[victim])
+	{
+		if(g_boolCanBuild || g_boolRoundEnded || g_boolPrepTime || victim == attacker)
+			return HAM_SUPERCEDE;
+		
+		if (g_iSupercut)
+			damage *= 99.0;
+		
+		SetHamParamFloat(4, damage);
+		
+		static szEmptyText[1] = "";
+		ShowDamageIndicator(attacker, damage, szEmptyText);
+		ShowDamageIndicator(victim, damage, szEmptyText);
+		
+		return HAM_HANDLED;
+	}
 	
-	if(g_boolCanBuild || g_boolRoundEnded || g_boolPrepTime || victim == attacker)
-		return HAM_SUPERCEDE;
-	
-	if (g_iSupercut) damage*=99.0;
-	
-	SetHamParamFloat(4, damage);
-	
-	static szEmptyText[1] = "";
-	ShowDamageIndicator(attacker, damage, szEmptyText);
-	ShowDamageIndicator(victim, damage, szEmptyText);
-	
-	return HAM_HANDLED;
+	return HAM_IGNORED;
 }
 
 public ham_ItemDeploy_Post(weapon_ent)
