@@ -72,7 +72,7 @@
 </table>
 
 ---
-Settings `Pro_basebuilder.ini`
+- Settings `Pro_basebuilder.ini`
 <details>
 <summary><code><strong>「 Click to expand view content 」</strong></code></summary>
 
