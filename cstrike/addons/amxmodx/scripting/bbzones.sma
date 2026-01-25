@@ -84,9 +84,9 @@ public plugin_init()
 	register_cvar("BBZones", PLUGIN_VERSION, FCVAR_SERVER|FCVAR_SPONLY|FCVAR_UNLOGGED)
 	register_dictionary("BBZones.txt")
 	
-	register_clcmd("say /bbzonesir", "menuZone")
-	register_clcmd("say_team /bbzonesir", "menuZone")
-	register_clcmd("say /pointir", "selectPoint")
+	register_clcmd("say /bbzones", "menuZone")
+	register_clcmd("say_team /bbzones", "menuZone")
+	register_clcmd("say /point", "selectPoint")
 	
 	get_mapname(g_szMap, charsmax(g_szMap))
 	strtolower(g_szMap)
