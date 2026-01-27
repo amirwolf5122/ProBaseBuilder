@@ -2214,10 +2214,10 @@ public cmdGrabEnt(id)
 	
 	if ((BlockLocker(ent) && BlockLocker(ent) != id && !ArePlayersInSameParty(id, BlockLocker(ent))) || (BlockLocker(ent) && !access(id, (g_bMoveLockBlocks ? ADMIN_ALL : FLAGS_OVERRIDE))))
 		return PLUGIN_HANDLED;
-		
+	
 	ExecuteForward(g_fwGrabEnt_Pre, g_fwDummyResult, id, ent);
 
-	new iOrigin[3], Float:fOrigin[3], Float:gOrigin[3], Float:fLook[3], Float:iLook[3], Float:vMoveTo[3];
+	new iOrigin[3], Float:fOrigin[3], Float:gOrigin[3], Float:vMoveTo[3], Float:velocity_vec[3];
 	
 	entity_get_vector(ent, EV_VEC_origin, gOrigin);
 	
@@ -2226,13 +2226,9 @@ public cmdGrabEnt(id)
 	get_user_origin(id, iOrigin, 1);
 	IVecFVec(iOrigin, fOrigin);
 	
-	pev(id, pev_v_angle, iLook);
-	angle_vector(iLook, ANGLEVECTOR_FORWARD, fLook);
-
-	new Float:temp_vec[3];
-	xs_vec_mul_scalar(fLook, g_fEntDist[id], temp_vec);
-	xs_vec_add(fOrigin, temp_vec, vMoveTo);
+	velocity_by_aim(id, floatround(g_fEntDist[id]), velocity_vec);
 	
+	xs_vec_add(fOrigin, velocity_vec, vMoveTo);
 	xs_vec_sub(gOrigin, vMoveTo, g_fOffset[id]);
 
 	new lastMover = GetLastMover(ent);
@@ -2543,18 +2539,14 @@ public fw_PlayerPreThink(id)
 	}
 	
 	new ent = g_iOwnedEnt[id];
-	new iOrigin[3], Float:fOrigin[3], Float:fLook[3], Float:iLook[3], Float:vMoveTo[3];
+	new iOrigin[3], Float:fOrigin[3], Float:vMoveTo[3], Float:velocity_vec[3];
 	
 	get_user_origin(id, iOrigin, 1);
 	IVecFVec(iOrigin, fOrigin);
 	
-	pev(id, pev_v_angle, iLook);
-	iLook[2] = 0.0;
-	angle_vector(iLook, ANGLEVECTOR_FORWARD, fLook);
+	VelocityByAim(id, floatround(g_fEntDist[id]), velocity_vec);
 	
-	new Float:temp_vec[3];
-	xs_vec_mul_scalar(fLook, g_fEntDist[id], temp_vec);
-	xs_vec_add(fOrigin, temp_vec, vMoveTo);
+	xs_vec_add(fOrigin, velocity_vec, vMoveTo);
 	xs_vec_add(vMoveTo, g_fOffset[id], vMoveTo);
 	
 	if (isPlayer(ent))
