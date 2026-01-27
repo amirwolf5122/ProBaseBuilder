@@ -1,4 +1,4 @@
-> ⚠️ **WARNING: This version is still in development. Possible bugs may be present.**
+> ⚠️ **WARNING: Bugs might be present.**
 
 # ProBaseBuilder
 
@@ -24,7 +24,7 @@
 | Command | Description |
 | :--- | :--- |
 | `/Clonemenu` | Opens a special admin menu for managing and cloning map blocks. |
-| `/bbzones` | Opens a special admin menu for To create no build Zones. `/point`|
+| `/bbzones` | Opens a special admin menu for To create no build Zones. `/point` |
 
 ---
 <table>
@@ -238,5 +238,5 @@ HUDINFO_POSITION = 0.01 0.22
 - [Download the Latest Version](https://github.com/amirwolf5122/ProBaseBuilder/archive/refs/heads/master.zip)
 
 ## YouTube & Contact
-- [YouTube Channel](https://www.youtube.com/@ProBaseBuilder)
-- [Telegram ID](http://t.me/Mr_Admins)
+- [YouTube](https://www.youtube.com/@ProBaseBuilder)
+- [Telegram](http://t.me/Mr_Admins)
