@@ -71,18 +71,14 @@ SetEntityAngles(id, const Float:angles[3], ent)
 		}
 	}
 	
-	new iOrigin[3], Float:fOrigin[3], Float:fLook[3], Float:iLook[3], Float:vMoveTo[3];
+	new iOrigin[3], Float:fOrigin[3], Float:vMoveTo[3], Float:velocity_vec[3];
 	
 	get_user_origin(id, iOrigin, 1);
 	IVecFVec(iOrigin, fOrigin);
 	
-	pev(id, pev_v_angle, iLook);
-	angle_vector(iLook, ANGLEVECTOR_FORWARD, fLook);
+	velocity_by_aim(id, floatround(g_fEntDist[id]), velocity_vec);
 	
-	new Float:temp_vec[3];
-	xs_vec_mul_scalar(fLook, g_fEntDist[id], temp_vec);
-	xs_vec_add(fOrigin, temp_vec, vMoveTo);
-	
+	xs_vec_add(fOrigin, velocity_vec, vMoveTo);
 	xs_vec_sub(origin, vMoveTo, g_fOffset[id]);
 }
 
